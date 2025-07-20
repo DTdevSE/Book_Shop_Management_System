@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+         http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+  <display-name>bookshop</display-name>
+
+  <!-- Welcome page -->
+  <welcome-file-list>
+    <welcome-file>Customer/CustomerSignup.jsp</welcome-file>
+  </welcome-file-list>
+
+  <!-- Servlet declaration -->
+  <servlet>
+    <servlet-name>AddCustomerServlet</servlet-name>
+    <servlet-class>com.bookshop.servlet.AddCustomerServlet</servlet-class>
+  </servlet>
+
+  <!-- Servlet mapping (corrected with leading slash) -->
+  <servlet-mapping>
+    <servlet-name>AddCustomerServlet</servlet-name>
+    <url-pattern>/AddCustomerServlet</url-pattern>
+  </servlet-mapping>
+  
+
+</web-app>
