@@ -35,10 +35,7 @@
     BookDAO bookDAO = new BookDAO();
     List<Book> book = bookDAO.getAllBooks(); 
 %>
-<%
-    BillDAO billDAO = new BillDAO();
-    int billCount = billDAO.getBillCount();  // call method that returns count of bills
-%>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -192,9 +189,9 @@
 <div class="sidebar">
     <h2>📘 Cashier Panel</h2>
     <a href="View_customers.jsp"><i class="fa fa-user-plus"></i> Register Customer</a>
-    <a href="AddCustomer.jsp"><i class="fa fa-user-edit"></i> Update Details</a>
+    
     <a href="BillingDashboard.jsp"><i class="fa fa-file-invoice"></i> Billing  Payment</a>
-    <a href="#history"><i class="fa fa-history"></i> Customer History</a>
+    <a href="Billing_history.jsp"><i class="fa fa-history"></i> Billing History</a>
     <a href="#help"><i class="fa fa-question-circle"></i> Help</a>
     <a href="AdminLogout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
@@ -219,12 +216,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card-box">
-            <i class="fas fa-file-invoice-dollar"></i>
-            <h3>Bills <%= billCount %></h3> <%-- Update this if you have a BillDAO later --%>
-        </div>
-    </div>
+   
 
     <div class="col-md-3">
         <div class="card-box">
