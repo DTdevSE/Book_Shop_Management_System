@@ -70,11 +70,7 @@
         profileImage = profileImage; // keep relative if in /uploads/
     }
 %>
-<%
-  if (session.getAttribute("customerName") == null) {
-      response.sendRedirect("CustomerLogin.jsp");
-  }
-%>
+
 
 
 

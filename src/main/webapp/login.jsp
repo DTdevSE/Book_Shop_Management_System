@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,60 +14,69 @@
 
         body {
             margin: 0;
+            padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #ffb347, #ffcc33);
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1.5s ease-in-out;
         }
 
         .login-container {
-            background-color: #fff;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 15px;
             padding: 40px 30px;
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
             width: 100%;
             max-width: 400px;
+            color: white;
         }
 
-        .login-container h2 {
+        .login-container h2, .login-container p {
+            text-align: center;
             margin-bottom: 20px;
-            color: #333;
+        }
+
+        .error-message {
+            background-color: rgba(255, 0, 0, 0.2);
+            border: 1px solid red;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
             text-align: center;
         }
 
         input[type="text"],
-        input[type="password"],
-        select {
+        input[type="password"] {
             width: 100%;
             padding: 12px 15px;
             margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            border: none;
+            border-radius: 10px;
             font-size: 16px;
         }
 
-        input[type="submit"] {
+        button[type="submit"] {
             background-color: #ff9900;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 12px;
             width: 100%;
             font-size: 16px;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
-        input[type="submit"]:hover {
+        button[type="submit"]:hover {
             background-color: #e68a00;
-        }
-
-        label {
-            font-weight: 500;
-            margin-top: 10px;
-            display: block;
         }
 
         @media (max-width: 480px) {
@@ -74,27 +86,50 @@
         }
     </style>
 </head>
-<body>
-    <div class="login-container">
-        <h2>Login</h2>
-        <form action="LoginServlet" method="post">
-            <label for="id_number">ID Number</label>
-            <input type="text" name="id_number" id="id_number" required>
+<body id="bg">
 
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" required>
+<div class="login-container">
+    <h2>Login</h2>
+    <p>PAHANA EDU</p>
 
-            <label for="role">Select Role</label>
-            <select name="role" id="role" required>
-                <option value="">--Select Role--</option>
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-                <option value="store_keeper">Store Keeper</option>
-                <option value="cashier">Cashier</option>
-            </select>
+    <!-- Session-based error handling -->
+    <c:if test="${not empty sessionScope.error}">
+        <div class="error-message" id="errorBox">${sessionScope.error}</div>
+        <c:remove var="error" scope="session"/>
+    </c:if>
 
-            <input type="submit" value="Login">
-        </form>
-    </div>
+    <form action="LoginServlet" method="post">
+        <input type="text" name="id_number" placeholder="Username" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+<script>
+    const backgrounds = [
+        'url("https://cdn.pixabay.com/photo/2020/12/29/10/38/bookshop-5870155_960_720.jpg")',
+        'url("https://cdn.pixabay.com/photo/2017/08/01/17/31/books-2566812_1280.jpg")'
+    ];
+
+    let index = 0;
+    const bg = document.getElementById('bg');
+
+    function changeBackground() {
+        index = (index + 1) % backgrounds.length;
+        bg.style.backgroundImage = backgrounds[index];
+    }
+
+    bg.style.backgroundImage = backgrounds[0];
+    setInterval(changeBackground, 10000);
+
+    // Auto-hide error message after 50 seconds
+    const errorBox = document.getElementById("errorBox");
+    if (errorBox) {
+        setTimeout(() => {
+            errorBox.style.display = "none";
+        }, 1000); // 10 seconds
+    }
+</script>
+
 </body>
 </html>
