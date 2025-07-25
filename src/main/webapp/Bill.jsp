@@ -115,6 +115,7 @@
                     <td>${item.discount}</td>
                     <td>${item.quantity}</td>
                     <td>${item.total}</td>
+                    
                 </tr>
             </c:forEach>
         </tbody>
