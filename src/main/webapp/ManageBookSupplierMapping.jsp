@@ -1,0 +1,165 @@
+<%@ page import="java.util.*, com.bookshop.model.BookSupplierMap, com.bookshop.dao.BookDAO, com.bookshop.dao.SupplierDAO" %>
+<%@ page import="com.bookshop.dao.BookSupplierMapDAO" %>
+
+<%
+    BookSupplierMapDAO dao = new BookSupplierMapDAO();
+    List<BookSupplierMap> mappings = dao.getAllMappings();
+
+    BookDAO bookDAO = new BookDAO();
+    List<com.bookshop.model.Book> books = bookDAO.getAllBooks();
+
+    SupplierDAO supplierDAO = new SupplierDAO();
+    List<com.bookshop.model.Supplier> suppliers = supplierDAO.getAllSuppliers();
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Manage Book-Supplier Mappings</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+</head>
+<style>
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    color: #333;
+    margin-bottom: 20px;
+}
+.back-btn i {
+    margin-right: 6px;
+}
+.back-btn:hover {
+    background-color: #ddd;
+    color: #000;
+}
+</style>
+
+<body class="container py-4">
+<!-- Back Button -->
+    <a href="Inventory Maintenance.jsp" class="back-btn" title="Go Back">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+
+<h2>Manage Book-Supplier Mappings</h2>
+
+<!-- Add new mapping -->
+<form method="post" action="BookSupplierMapServlet" class="row g-3 align-items-end mb-4">
+    <input type="hidden" name="action" value="add" />
+    <div class="col-md-3">
+        <label for="bookId" class="form-label">Book</label>
+        <select name="bookId" id="bookId" class="form-select" required>
+            <option value="">Select Book</option>
+            <% for (com.bookshop.model.Book b : books) { %>
+                <option value="<%= b.getId() %>"><%= b.getName() %></option>
+            <% } %>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label for="supplierId" class="form-label">Supplier</label>
+        <select name="supplierId" id="supplierId" class="form-select" required>
+            <option value="">Select Supplier</option>
+            <% for (com.bookshop.model.Supplier s : suppliers) { %>
+                <option value="<%= s.getSupplierId() %>"><%= s.getName() %></option>
+            <% } %>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label for="supplyPrice" class="form-label">Supply Price</label>
+        <input type="number" name="supplyPrice" id="supplyPrice" class="form-control" step="0.01" min="0" required />
+    </div>
+    <div class="col-md-2">
+        <label for="supplyQty" class="form-label">Supply Quantity</label>
+        <input type="number" name="supplyQty" id="supplyQty" class="form-control" min="0" required />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-success">Add Mapping</button>
+    </div>
+</form>
+
+<!-- List all mappings -->
+<table class="table table-bordered table-striped align-middle text-center">
+    <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>Book</th>
+            <th>Supplier</th>
+            <th>Supply Price</th>
+            <th>Supply Quantity</th>
+            <th>Supply Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% for (BookSupplierMap map : mappings) { 
+            String bookName = "";
+            String supplierName = "";
+            // Find book name
+            for (com.bookshop.model.Book b : books) {
+                if (b.getId() == map.getBookId()) {
+                    bookName = b.getName();
+                    break;
+                }
+            }
+            // Find supplier name
+            for (com.bookshop.model.Supplier s : suppliers) {
+                if (s.getSupplierId() == map.getSupplierId()) {
+                    supplierName = s.getName();
+                    break;
+                }
+            }
+        %>
+        <tr>
+            <form method="post" action="BookSupplierMapServlet" class="row g-2 align-items-center">
+                <input type="hidden" name="action" value="update" />
+                <input type="hidden" name="id" value="<%= map.getId() %>" />
+                <td><%= map.getId() %></td>
+                <td>
+                    <select name="bookId" class="form-select form-select-sm" required>
+                        <% for (com.bookshop.model.Book b : books) { %>
+                            <option value="<%= b.getId() %>" <%= b.getId() == map.getBookId() ? "selected" : "" %>><%= b.getName() %></option>
+                        <% } %>
+                    </select>
+                </td>
+                <td>
+                    <select name="supplierId" class="form-select form-select-sm" required>
+                        <% for (com.bookshop.model.Supplier s : suppliers) { %>
+                            <option value="<%= s.getSupplierId() %>" <%= s.getSupplierId() == map.getSupplierId() ? "selected" : "" %>><%= s.getName() %></option>
+                        <% } %>
+                    </select>
+                </td>
+                <td><input type="number" name="supplyPrice" class="form-control form-control-sm" step="0.01" min="0" value="<%= map.getSupplyPrice() %>" required /></td>
+                <td><input type="number" name="supplyQty" class="form-control form-control-sm" min="0" value="<%= map.getSupplyQty() %>" required /></td>
+                <td><%= map.getSupplyDate() %></td>
+                <td class="d-flex gap-1 justify-content-center">
+                    <button type="submit" class="btn btn-primary btn-sm" title="Update">
+                        <i class="fas fa-edit"></i>
+                    </button>
+            </form>
+            <form method="post" action="BookSupplierMapServlet" onsubmit="return confirm('Delete this mapping?');">
+                <input type="hidden" name="action" value="delete" />
+                <input type="hidden" name="id" value="<%= map.getId() %>" />
+                <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </form>
+                </td>
+        </tr>
+        <% } %>
+    </tbody>
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

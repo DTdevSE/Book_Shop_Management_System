@@ -32,7 +32,7 @@ public class SearchBillServlet extends HttpServlet {
 
         if (customerIdStr == null || customerIdStr.trim().isEmpty()) {
             request.setAttribute("error", "Please enter a customer ID to search.");
-            request.getRequestDispatcher("Billing_history.jsp").forward(request, response);
+            request.getRequestDispatcher("CashierBilling_History.jsp").forward(request, response);
             return;
         }
 
@@ -71,7 +71,7 @@ public class SearchBillServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        request.getRequestDispatcher("Billing_history.jsp").forward(request, response);
+        request.getRequestDispatcher("CashierBilling_History.jsp").forward(request, response);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

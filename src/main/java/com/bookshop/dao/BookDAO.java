@@ -1,11 +1,15 @@
 package com.bookshop.dao;
 
 import com.bookshop.model.Book;
+import com.bookshop.model.Supplier;
 import com.bookshop.util.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 public class BookDAO {
 
@@ -332,5 +336,211 @@ public class BookDAO {
             return false;
         }
     }
-    
+    public boolean updateBookStockAndDiscount(int bookId, int stock, double discount) {
+        String sql = "UPDATE books SET stock_quantity = ?, discount = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, stock);
+            stmt.setDouble(2, discount);
+            stmt.setInt(3, bookId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public int getOutOfStockCount() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM books WHERE stock_quantity = 0";
+        try (Connection conn = DBConnection.getConnection();  // Get connection first
+             Statement st = conn.createStatement()) {
+            ResultSet rs = st.executeQuery(sql);
+            if (rs.next()) count = rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+ // BookDAO.java
+    public List<Book> getOutOfStockBooks() {
+        List<Book> outOfStockBooks = new ArrayList<>();
+        String sql = "SELECT * FROM books WHERE stock_quantity = 0 ORDER BY upload_date_time DESC";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Book book = new Book();
+                int bookId = rs.getInt("id");
+
+                book.setId(bookId);
+                book.setName(rs.getString("name"));
+                book.setCategory(rs.getString("category"));
+                book.setAuthor(rs.getString("author"));
+                book.setDescription(rs.getString("description"));
+                book.setPrice(rs.getDouble("price"));
+                book.setDiscount(rs.getDouble("discount"));
+                book.setOffers(rs.getString("offers"));
+                book.setStockQuantity(rs.getInt("stock_quantity"));
+                book.setUploadDateTime(rs.getTimestamp("upload_date_time").toLocalDateTime());
+
+                // Fetch all images for this book
+                book.setImages(getBookImages(bookId));
+
+                outOfStockBooks.add(book);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return outOfStockBooks;
+    }
+
+    public Map<Integer, List<Supplier>> getSuppliersForBooks(List<Integer> bookIds) {
+        Map<Integer, List<Supplier>> map = new HashMap<>();
+        if (bookIds == null || bookIds.isEmpty()) return map;
+
+        StringBuilder sql = new StringBuilder(
+            "SELECT bsm.book_id, s.supplier_id, s.name, s.email, s.phone, s.address " +
+            "FROM book_supplier_map bsm " +
+            "JOIN suppliers s ON bsm.supplier_id = s.supplier_id " +
+            "WHERE bsm.book_id IN ("
+        );
+
+        for (int i = 0; i < bookIds.size(); i++) {
+            sql.append("?");
+            if (i < bookIds.size() - 1) sql.append(",");
+        }
+        sql.append(")");
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < bookIds.size(); i++) {
+                ps.setInt(i + 1, bookIds.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int bookId = rs.getInt("book_id");
+                Supplier s = new Supplier();
+                s.setSupplierId(rs.getInt("supplier_id"));
+                s.setName(rs.getString("name"));
+                s.setEmail(rs.getString("email"));
+                s.setPhone(rs.getString("phone"));
+                s.setAddress(rs.getString("address"));
+
+                map.computeIfAbsent(bookId, k -> new ArrayList<>()).add(s);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+    public int getTotalStock() {
+        int totalStock = 0;
+        String sql = "SELECT SUM(stock_quantity) FROM books";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                totalStock = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalStock;
+    }
+    public List<Map<String, Object>> getStockBalancingReport() {
+        List<Map<String, Object>> report = new ArrayList<>();
+        String sql = "SELECT book_id, book_name, category, stock_quantity, min_stock, max_stock, " +
+                     "(stock_quantity * price) AS stock_value FROM books ORDER BY book_name";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("book_id", rs.getInt("book_id"));
+                data.put("book_name", rs.getString("book_name"));
+                data.put("category", rs.getString("category"));
+                data.put("closing_stock", rs.getInt("stock_quantity"));
+                data.put("min_stock", rs.getInt("min_stock"));
+                data.put("max_stock", rs.getInt("max_stock"));
+                data.put("stock_value", rs.getDouble("stock_value"));
+
+                // Stock status
+                String status = "OK";
+                if (rs.getInt("stock_quantity") <= rs.getInt("min_stock")) {
+                    status = "Low Stock";
+                } else if (rs.getInt("stock_quantity") > rs.getInt("max_stock")) {
+                    status = "Over Stock";
+                }
+                data.put("status", status);
+
+                report.add(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return report;
+    }
+    public int getLowStockCount() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM books WHERE stock_quantity <= min_stock";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+    public List<Map<String, Object>> getDailyStockBalancing() throws SQLException {
+        String sql =
+            "SELECT t.date, " +
+            "SUM(t.stock_in) AS stock_in, " +
+            "SUM(t.stock_out) AS stock_out " +
+            "FROM ( " +
+            "  SELECT DATE(supply_date) AS date, SUM(supply_qty) AS stock_in, 0 AS stock_out " +
+            "  FROM book_supplier_map " +
+            "  GROUP BY DATE(supply_date) " +
+            "  UNION ALL " +
+            "  SELECT DATE(b.billing_timestamp) AS date, 0 AS stock_in, SUM(bi.quantity) AS stock_out " +
+            "  FROM bill_items bi " +
+            "  JOIN bills b ON bi.bill_id = b.bill_id " +
+            "  GROUP BY DATE(b.billing_timestamp) " +
+            ") t " +
+            "GROUP BY t.date " +
+            "ORDER BY t.date ASC";
+
+        List<Map<String, Object>> list = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Map<String, Object> row = new HashMap<>();
+                row.put("date", rs.getDate("date"));
+                row.put("stock_in", rs.getInt("stock_in"));
+                row.put("stock_out", rs.getInt("stock_out"));
+                list.add(row);
+            }
+        }
+        return list;
+    }
+
 }
+
+

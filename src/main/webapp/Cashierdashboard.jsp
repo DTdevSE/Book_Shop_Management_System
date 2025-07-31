@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="com.bookshop.dao.CustomerDAO, com.bookshop.dao.BuyRequestDAO" %>
-<%@ page import="com.bookshop.model.Customer, com.bookshop.model.Account, com.bookshop.model.Book" %>
+<%@ page import="com.bookshop.model.Customer, com.bookshop.model.Account, com.bookshop.model.Book,com.bookshop.dao.SupplierDAO" %>
 <%@ page import="com.bookshop.dao.AccountDAO, com.bookshop.dao.BookDAO" %>
 <%@ page import="java.util.*" %>
 <%@ page import="com.bookshop.dao.BillDAO" %>
@@ -8,7 +8,7 @@
 
 
 <%
-    // Get all accounts
+    // Load all accounts and count roles
     AccountDAO accountDAO = new AccountDAO();
     List<Account> allAccounts = accountDAO.getAllAccounts();
 
@@ -17,25 +17,69 @@
     int storeKeeperCount = 0;
 
     for (Account acc : allAccounts) {
-        if ("admin".equalsIgnoreCase(acc.getRole())) {
+        String role = acc.getRole();
+        if ("admin".equalsIgnoreCase(role)) {
             adminCount++;
-        } else if ("cashier".equalsIgnoreCase(acc.getRole())) {
+        } else if ("cashier".equalsIgnoreCase(role)) {
             cashierCount++;
-        } else if ("store_keeper".equalsIgnoreCase(acc.getRole())) {
+        } else if ("store_keeper".equalsIgnoreCase(role)) {
             storeKeeperCount++;
         }
     }
 
-    // Get all customers
+    // Load customers count
     CustomerDAO customerDAO = new CustomerDAO();
-    List<Customer> allCustomers = customerDAO.getAllCustomers();
-    int customerCount = allCustomers.size();
+    int customerCount = customerDAO.getAllCustomers().size();
+
+    // Load books and count stock alerts
+    BookDAO bookDAO = new BookDAO();
+    List<Book> books = bookDAO.getAllBooks();
+
+    int lowStockCount = 0;
+    int outOfStockCount = 0;
+
+    for (Book b : books) {
+        int qty = b.getStockQuantity();
+        if (qty == 0) {
+            outOfStockCount++;
+        } else if (qty > 0 && qty < 5) {
+            lowStockCount++;
+        }
+    }
 %>
 <%
-    BookDAO bookDAO = new BookDAO();
-    List<Book> book = bookDAO.getAllBooks(); 
+    Account account = (Account) session.getAttribute("account");
+    String name = (account != null) ? account.getFullname() : "Admin";
+    int userId = (account != null) ? account.getId() : -1;
+    String profileImg = (account != null && account.getProfileImage() != null)
+                        ? account.getProfileImage()
+                        : "assets/img/default-avatar.png";
 %>
+<%BillDAO billDAO = new BillDAO();
+int billCount = billDAO.getTotalBillCount();
+request.setAttribute("billCount", billCount);
 
+int totalItemsSold = billDAO.getTotalItemsSold();
+request.setAttribute("totalItemsSold", totalItemsSold);
+
+ %>
+ <%SupplierDAO supplierDAO = new SupplierDAO();
+ int supplierCount = supplierDAO.getTotalSupplierCount();
+ request.setAttribute("supplierCount", supplierCount);
+ %>
+
+<%
+
+int totalStock = bookDAO.getTotalStock();
+request.setAttribute("totalStock", totalStock);
+
+%>
+ 
+
+ <% 
+ List<Map<String, Object>> stockBalancingReport = bookDAO.getDailyStockBalancing();
+ request.setAttribute("stockBalancingReport", stockBalancingReport);
+ %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -171,6 +215,20 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        .datetime {
+       color: var(--primary);
+			  font-size: 10px;
+			  color: #fff;
+			  background: rgba(255, 255, 255, 0.1); /* semi-transparent */
+			  padding: 10px 15px;
+			  border-radius: 12px;
+			  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+			  backdrop-filter: blur(8px); /* modern blur effect */
+			  -webkit-backdrop-filter: blur(8px); /* Safari support */
+			  border: 1px solid rgba(255, 255, 255, 0.3);
+			  margin-top: 40px;
+			   color: var(--primary);
+    }
     </style>
 </head>
 
@@ -191,49 +249,100 @@
     <a href="View_customers.jsp"><i class="fa fa-user-plus"></i> Register Customer</a>
     
     <a href="BillingDashboard.jsp"><i class="fa fa-file-invoice"></i> Billing  Payment</a>
-    <a href="Billing_history.jsp"><i class="fa fa-history"></i> Billing History</a>
+    <a href="CashierBilling_History.jsp"><i class="fa fa-history"></i> Billing History</a>
     <a href="#help"><i class="fa fa-question-circle"></i> Help</a>
     <a href="AdminLogout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    <div id="dateTime" class="datetime"></div>
+    <div class="text-center mt-5 mb-3">
+        <img src="<%= profileImg %>" alt="Admin"
+             style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #fff;margin-top: 50px;">
+        <p style="margin-top: 8px; font-weight: 600; color: var(--primary); font-size: 14px;"><%= name %></p>
+       
+    </div>
 </div>
 
 <!-- Main Content -->
 <div class="main">
-    <h1>Welcome, Cashier</h1>
+    <h1>Welcome, Cashier🧞 <%= name %></h1>
 
-   <div class="row mt-4 g-4">
-    <div class="col-md-3">
-        <div class="card-box">
-            <i class="fas fa-users"></i>
-       
-          <h3>Customers <%= customerCount %></h3>
+    <div class="row mt-4 g-4">
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-users"></i>
+                <h3>Customers <%= customerCount %></h3>
+            </div>
         </div>
-    </div>
 
-    <div class="col-md-3">
-        <div class="card-box">
-            <i class="fas fa-book"></i>
-            <h3> Books <%= book.size() %></h3>
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-book"></i>
+                <h3>Books <%= books.size() %></h3>
+            </div>
         </div>
-    </div>
 
-   
-
-    <div class="col-md-3">
-        <div class="card-box">
-            <i class="fas fa-user-shield"></i>
-            
-            <h3>Cashiers <%= cashierCount %></h3>
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-user-shield"></i>
+                <h3>Cashiers <%= cashierCount %></h3>
+            </div>
         </div>
+
+        <div class="col-md-3 col-sm-6">
+            <div class="card-box">
+                <i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i>
+                <h3>Low Stock: <span style="color: #ffc107;"><%= lowStockCount %></span></h3>
+            </div>
+        </div>
+
+        <!-- Out of Stock -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card-box">
+                <i class="fas fa-exclamation-circle" style="color: #dc3545;"></i>
+                <h3>Out of Stock: <span style="color: #dc3545;"><%= outOfStockCount %></span></h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <h3>Total Bills: <%= request.getAttribute("billCount") %></h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-truck"></i>
+                <h3>Total Suppliers: <%= request.getAttribute("supplierCount") %></h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-boxes"></i>
+                <h3>Total Items Sold: <%= totalItemsSold %></h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-warehouse"></i>
+                <h3>Total Stock: <%= request.getAttribute("totalStock") %></h3>
+            </div>
+        </div>
+        
+       <!-- Footer -->
+		<footer class="py-4 text-center" style="font-size: 14px; background-color:#181818;">
+		  <div class="container">
+		    <p style="color: #343a40;">© 2025 <strong style="color: #FF6F00;">PahanaEdu</strong>. All rights reserved.</p>
+		    <p style="color: #6c757d;">
+		      Developed by <strong style="color: #007BFF;">Dinitha Thewmika</strong>, 
+		      Undergraduate, <em style="color: #28a745;">ICBT Campus</em> 🎓
+		    </p>
+		  </div>
+		</footer>
     </div>
 </div>
 
-    <div class="content-section mt-5">
-    <h4 class="mb-3">Average Users Per Month</h4>
-    <canvas id="myChart" height="100"></canvas>
-</div>
-
-</div>
-  
 
 <!-- Scripts -->
 <script>
@@ -256,6 +365,25 @@
         document.body.classList.toggle('light-mode');
         updateThemeMode();
     });
+    
+    ///
+     function updateDateTime() {
+      const now = new Date();
+      const options = { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      };
+      document.getElementById('dateTime').textContent = now.toLocaleString('en-US', options);
+    }
+
+    // Update immediately and every second
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
 </script>
 
 <!-- Chart -->

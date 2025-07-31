@@ -45,7 +45,7 @@
 
 
 <body class="container py-4">
-<a href="BillingDashboard.jsp" class="back-btn" title="Go Back">
+<a href="Cashierdashboard.jsp" class="back-btn" title="Go Back">
                 <i class="fas fa-arrow-left"></i> Back
             </a>
 

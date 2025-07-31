@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Book {
     private int id;
-    private List<String> images = new ArrayList<>(); // ✅ Support for multiple images
+    private List<String> images = new ArrayList<>(); // Support for multiple images
     private String name;
     private String category;
     private String author;
@@ -16,11 +16,13 @@ public class Book {
     private String offers;
     private int stockQuantity;
     private LocalDateTime uploadDateTime;
+    private Supplier supplier; // ✅ Supplier support
 
     public Book() {}
 
     public Book(int id, List<String> images, String name, String category, String author, String description,
-                double price, double discount, String offers, int stockQuantity, LocalDateTime uploadDateTime) {
+                double price, double discount, String offers, int stockQuantity, LocalDateTime uploadDateTime,
+                Supplier supplier) {
         this.id = id;
         this.images = images;
         this.name = name;
@@ -32,6 +34,7 @@ public class Book {
         this.offers = offers;
         this.stockQuantity = stockQuantity;
         this.uploadDateTime = uploadDateTime;
+        this.supplier = supplier;
     }
 
     // Getters and setters
@@ -40,6 +43,14 @@ public class Book {
 
     public List<String> getImages() { return images; }
     public void setImages(List<String> images) { this.images = images; }
+
+    // Returns the first image path or null
+    public String getImagePath() {
+        if (images != null && !images.isEmpty()) {
+            return images.get(0);
+        }
+        return null;
+    }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -68,6 +79,9 @@ public class Book {
     public LocalDateTime getUploadDateTime() { return uploadDateTime; }
     public void setUploadDateTime(LocalDateTime uploadDateTime) { this.uploadDateTime = uploadDateTime; }
 
+    public Supplier getSupplier() { return supplier; }
+    public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+
     @Override
     public String toString() {
         return "Book{" +
@@ -82,6 +96,7 @@ public class Book {
                 ", offers='" + offers + '\'' +
                 ", stockQuantity=" + stockQuantity +
                 ", uploadDateTime=" + uploadDateTime +
+                ", supplier=" + (supplier != null ? supplier.getName() : "null") +
                 '}';
     }
 }

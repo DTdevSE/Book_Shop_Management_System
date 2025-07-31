@@ -15,9 +15,10 @@ public class AddMultipleToBillServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Step 1: Validate customer ID param
+
+        // Step 1: Validate Customer ID
         String customerIdStr = request.getParameter("customerId");
-        if (customerIdStr == null || customerIdStr.trim().isEmpty()) {
+        if (customerIdStr == null || customerIdStr.isEmpty()) {
             forwardWithError("Customer ID is required.", request, response);
             return;
         }
@@ -26,14 +27,32 @@ public class AddMultipleToBillServlet extends HttpServlet {
         try {
             customerId = Integer.parseInt(customerIdStr);
         } catch (NumberFormatException e) {
-            forwardWithError("Customer ID is not valid, please check.", request, response);
+            forwardWithError("Customer ID must be a number.", request, response);
             return;
         }
 
         // Step 2: Validate selected books
         String[] selectedBookIds = request.getParameterValues("selectedBooks");
         if (selectedBookIds == null || selectedBookIds.length == 0) {
-            forwardWithError("No books selected.", request, response);
+            forwardWithError("No books selected for billing.", request, response);
+            return;
+        }
+
+        // Step 3: Validate Payment Inputs
+        String paymentMethod = request.getParameter("paymentMethod");
+        String amountGivenStr = request.getParameter("amountGiven");
+        String shippingAddress = request.getParameter("shippingAddress");
+
+        if (paymentMethod == null || paymentMethod.trim().isEmpty()) {
+            forwardWithError("Payment method is required.", request, response);
+            return;
+        }
+
+        double amountGiven;
+        try {
+            amountGiven = Double.parseDouble(amountGivenStr);
+        } catch (NumberFormatException e) {
+            forwardWithError("Invalid amount given.", request, response);
             return;
         }
 
@@ -42,23 +61,22 @@ public class AddMultipleToBillServlet extends HttpServlet {
         double totalBill = 0;
 
         try {
+            // Step 4: Build Bill Items
             for (String bookIdStr : selectedBookIds) {
                 int bookId = Integer.parseInt(bookIdStr);
-
                 String qtyStr = request.getParameter("quantity_" + bookId);
                 int quantity = 1;
+
                 try {
                     quantity = Integer.parseInt(qtyStr);
                     if (quantity < 1) quantity = 1;
-                } catch (NumberFormatException ex) {
-                    quantity = 1; // fallback to 1 if invalid
-                }
+                } catch (NumberFormatException ignored) {}
 
                 Book book = bookDAO.getBookById(bookId);
                 if (book == null) continue;
 
                 if (quantity > book.getStockQuantity()) {
-                    forwardWithError("Quantity for book " + book.getName() + " exceeds available stock.", request, response);
+                    forwardWithError("Not enough stock for book: " + book.getName(), request, response);
                     return;
                 }
 
@@ -73,53 +91,58 @@ public class AddMultipleToBillServlet extends HttpServlet {
                 item.setPrice(unitPrice);
                 item.setDiscount(discount);
                 item.setQuantity(quantity);
-                item.setTotal(itemTotal);
+                
 
                 totalBill += itemTotal;
                 billItems.add(item);
             }
 
-            // Step 3: Create Bill
+            // Step 5: Validate Payment Logic
+            double changeDue = amountGiven - totalBill;
+            if (changeDue < 0) {
+                forwardWithError("Amount given is less than total bill.", request, response);
+                return;
+            }
+
+            // Step 6: Save Bill
             Bill bill = new Bill();
             bill.setCustomerId(customerId);
             bill.setTotalAmount(totalBill);
+            bill.setPaymentMethod(paymentMethod);
+            bill.setAmountGiven(amountGiven);
+            bill.setChangeDue(changeDue);
+            bill.setShippingAddress(shippingAddress);
 
             BillDAO billDAO = new BillDAO();
-            int billId = billDAO.createBill(bill);
+            int billId = billDAO.insertBill(bill); // returns generated bill ID
 
+            // Step 7: Save Bill Items
             BillItemDAO billItemDAO = new BillItemDAO();
-
             for (BillItem item : billItems) {
                 item.setBillId(billId);
-                billItemDAO.createBillItem(item);
-
-                boolean success = bookDAO.reduceStock(item.getBookId(), item.getQuantity());
-                if (!success) {
-                    forwardWithError("Failed to deduct stock for book: " + item.getBookName(), request, response);
-                    return;
-                }
+                billItemDAO.insertBillItem(item);
+                bookDAO.reduceStock(item.getBookId(), item.getQuantity());
             }
 
-            // Step 4: Load Customer for JSP
+            // Step 8: Fetch customer and forward
             CustomerDAO customerDAO = new CustomerDAO();
             Customer customer = customerDAO.getCustomerById(customerId);
 
-            // Step 5: Pass to JSP
             request.setAttribute("bill", billDAO.getBillById(billId));
             request.setAttribute("billItems", billItemDAO.getItemsByBillId(billId));
             request.setAttribute("customer", customer);
+
             request.getRequestDispatcher("/Bill.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            forwardWithError("Billing error: " + e.getMessage(), request, response);
+            forwardWithError("Billing failed: " + e.getMessage(), request, response);
         }
     }
 
-    private void forwardWithError(String errorMsg, HttpServletRequest request, HttpServletResponse response)
+    private void forwardWithError(String error, HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("error", errorMsg);
+        request.setAttribute("error", error);
         request.getRequestDispatcher("/BillingDashboard.jsp").forward(request, response);
     }
 }
-

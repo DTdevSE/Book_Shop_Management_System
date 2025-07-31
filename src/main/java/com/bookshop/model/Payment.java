@@ -1,120 +1,43 @@
 package com.bookshop.model;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class Payment {
+    private int paymentId;
+    private int billId;
+    private int customerId;
+    private double totalPrice;
+    private String paymentMethod;
+    private double amountGiven;
+    private double changeDue;
+    private String paymentStatus;
+    private Date paymentDate;
 
-    private int id;
-    private int requestId;
-    private String buyerName;
-    private int quantity;
-    private BigDecimal pricePerUnit;
-    private BigDecimal discount;
-    private BigDecimal totalAmount;
-    private Timestamp paymentTime;
-    private String status;
-    private String slipPath;
+    // Getters and Setters
+    public int getPaymentId() { return paymentId; }
+    public void setPaymentId(int paymentId) { this.paymentId = paymentId; }
 
-    // No-arg constructor
-    public Payment() {
-    }
+    public int getBillId() { return billId; }
+    public void setBillId(int billId) { this.billId = billId; }
 
-    // Full constructor
-    public Payment(int id, int requestId, String buyerName, int quantity, BigDecimal pricePerUnit,
-                   BigDecimal discount, BigDecimal totalAmount, Timestamp paymentTime,
-                   String status, String slipPath) {
-        this.id = id;
-        this.requestId = requestId;
-        this.buyerName = buyerName;
-        this.quantity = quantity;
-        this.pricePerUnit = pricePerUnit;
-        this.discount = discount;
-        this.totalAmount = totalAmount;
-        this.paymentTime = paymentTime;
-        this.status = status;
-        this.slipPath = slipPath;
-    }
+    public int getCustomerId() { return customerId; }
+    public void setCustomerId(int customerId) { this.customerId = customerId; }
 
-    // Getters and Setters for all fields
+    public double getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(double totalPrice) { this.totalPrice = totalPrice; }
 
-    public int getId() {
-        return id;
-    }
+    public String getPaymentMethod() { return paymentMethod; }
+    public void setPaymentMethod(String paymentMethod) { this.paymentMethod = paymentMethod; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public double getAmountGiven() { return amountGiven; }
+    public void setAmountGiven(double amountGiven) { this.amountGiven = amountGiven; }
 
-    public int getRequestId() {
-        return requestId;
-    }
+    public double getChangeDue() { return changeDue; }
+    public void setChangeDue(double changeDue) { this.changeDue = changeDue; }
 
-    public void setRequestId(int requestId) {
-        this.requestId = requestId;
-    }
+    public String getPaymentStatus() { return paymentStatus; }
+    public void setPaymentStatus(String paymentStatus) { this.paymentStatus = paymentStatus; }
 
-    public String getBuyerName() {
-        return buyerName;
-    }
-
-    public void setBuyerName(String buyerName) {
-        this.buyerName = buyerName;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getPricePerUnit() {
-        return pricePerUnit;
-    }
-
-    public void setPricePerUnit(BigDecimal pricePerUnit) {
-        this.pricePerUnit = pricePerUnit;
-    }
-
-    public BigDecimal getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public Timestamp getPaymentTime() {
-        return paymentTime;
-    }
-
-    public void setPaymentTime(Timestamp paymentTime) {
-        this.paymentTime = paymentTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getSlipPath() {
-        return slipPath;
-    }
-
-    public void setSlipPath(String slipPath) {
-        this.slipPath = slipPath;
-    }
+    public Date getPaymentDate() { return paymentDate; }
+    public void setPaymentDate(Date paymentDate) { this.paymentDate = paymentDate; }
 }

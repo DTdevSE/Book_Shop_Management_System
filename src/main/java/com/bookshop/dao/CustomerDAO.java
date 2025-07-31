@@ -7,6 +7,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class CustomerDAO {
 
     // Add new customer - include registered_time (set to current timestamp)
@@ -78,7 +80,9 @@ public class CustomerDAO {
             ps.setString(2, customer.getEmail());
             ps.setString(3, customer.getAddress());
             ps.setString(4, customer.getTelephone());
-            ps.setString(5, customer.getPassword());
+            // Hash password before update
+            String hashedPassword = BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt());
+            ps.setString(5, hashedPassword);
             ps.setString(6, customer.getGender());
             ps.setDate(7, customer.getDob());
             ps.setString(8, customer.getMembershipType());
@@ -160,6 +164,73 @@ public class CustomerDAO {
             e.printStackTrace();
         }
         return customer;
+    }
+    public Customer loginCustomer(int accountNumber, String password) {
+        String sql = "SELECT * FROM customers WHERE account_number = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, accountNumber);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String hashedPassword = rs.getString("password");
+                    // Verify password
+                    if (BCrypt.checkpw(password, hashedPassword)) {
+                        Customer customer = new Customer();
+                        customer.setAccountNumber(rs.getInt("account_number"));
+                        customer.setName(rs.getString("name"));
+                        customer.setEmail(rs.getString("email"));
+                        customer.setAddress(rs.getString("address"));
+                        customer.setTelephone(rs.getString("telephone"));
+                        customer.setPassword(hashedPassword);  // store hashed password
+                        customer.setProfileImage(rs.getString("profile_image"));
+                        customer.setGender(rs.getString("gender"));
+                        customer.setDob(rs.getDate("dob"));
+                        customer.setMembershipType(rs.getString("membership_type"));
+                        customer.setLoginStatus(rs.getString("login_status"));
+                        customer.setRegisteredTime(rs.getTimestamp("registered_time"));
+                        return customer;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public int getTotalStoreKeepers() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM customers WHERE role = 'storekeeper'";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+    public int getTotalCustomers() {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM customers";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return count;
     }
 
 }

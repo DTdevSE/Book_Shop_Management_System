@@ -231,6 +231,43 @@ public class AccountDAO {
 
 	        return weeklyData;
 	    }
+	    public Account validateLogin(String idNumber, String password) {
+	        Account account = null;
+	        String sql = "SELECT * FROM accounts WHERE id_number = ?";
+
+	        try (Connection conn = DBConnection.getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setString(1, idNumber);
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+	                String hashedPassword = rs.getString("password");
+
+	                if (BCrypt.checkpw(password, hashedPassword)) {
+	                    account = new Account();
+	                    account.setId(rs.getInt("id"));
+	                    account.setFullname(rs.getString("fullname"));
+	                    account.setIdNumber(rs.getString("id_number"));
+	                    account.setPassword(hashedPassword); // store hashed
+	                    account.setRole(rs.getString("role"));
+	                    account.setDob(rs.getDate("dob"));
+	                    account.setAddress(rs.getString("address"));
+	                    account.setProfileImage(rs.getString("profile_image"));
+
+	                    if (rs.getTimestamp("created_at") != null)
+	                        account.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+	                    if (rs.getTimestamp("last_updated") != null)
+	                        account.setLastUpdated(rs.getTimestamp("last_updated").toLocalDateTime());
+	                }
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return account;
+	    }
 
 	}
 

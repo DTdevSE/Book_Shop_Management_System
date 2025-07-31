@@ -19,7 +19,7 @@ public class FinalPaymentServlet extends HttpServlet {
         
         String requestIdStr = request.getParameter("requestId");
         String customerName = request.getParameter("customerName");
-        String bookName = request.getParameter("bookName");
+        //String bookName = request.getParameter("bookName");
         String totalAmountStr = request.getParameter("totalAmount");
         String paymentMethod = request.getParameter("paymentMethod");
 
