@@ -3,6 +3,8 @@ package com.bookshop.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.bookshop.model.Account;
 import com.bookshop.util.DBConnection;
 import java.util.ArrayList;
@@ -267,6 +269,18 @@ public class AccountDAO {
 	        }
 
 	        return account;
+	    }
+	    public int getNonAdminUserCount() throws SQLException {
+	        String sql = "SELECT COUNT(*) FROM accounts WHERE role != 'admin'";
+	        try (Connection conn = DBConnection.getConnection();
+	             PreparedStatement stmt = conn.prepareStatement(sql);
+	             ResultSet rs = stmt.executeQuery()) {
+	            
+	            if (rs.next()) {
+	                return rs.getInt(1);
+	            }
+	        }
+	        return 0;
 	    }
 
 	}

@@ -364,7 +364,7 @@
       <% if (customerName == null || customerName.trim().isEmpty()) { %>
         <!-- Show login button if NOT logged in -->
         <div class="d-flex align-items-center gap-2">
-          <a href="/login" class="btn btn-outline-primary">
+          <a href="<%= request.getContextPath() %>/CustomerLogout"  class="btn btn-outline-primary">
             <i class="fas fa-sign-in-alt me-1"></i> Login Out
           </a>
         </div>

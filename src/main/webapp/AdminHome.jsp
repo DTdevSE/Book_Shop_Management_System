@@ -8,16 +8,23 @@
 <%@ page import="com.bookshop.dao.AccountDAO,com.bookshop.dao.SupplierDAO" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.*" %> 
+
 <%@ page import="com.bookshop.dao.BillDAO" %><!-- ✅ This covers Map, HashMap, etc. -->
 <%@ page import="com.bookshop.model.Account" %>
+<%@ page import="com.bookshop.model.BillItem" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%
-    // Load all accounts and count roles
     AccountDAO accountDAO = new AccountDAO();
+
+    // Fetch all accounts
     List<Account> allAccounts = accountDAO.getAllAccounts();
 
     int adminCount = 0;
     int cashierCount = 0;
     int storeKeeperCount = 0;
+    int userCount = 0;  // count for role 'user'
 
     for (Account acc : allAccounts) {
         String role = acc.getRole();
@@ -27,9 +34,15 @@
             cashierCount++;
         } else if ("store_keeper".equalsIgnoreCase(role)) {
             storeKeeperCount++;
+        } else if ("user".equalsIgnoreCase(role)) {
+            userCount++;
         }
     }
 
+    // Total non-admin users (cashier + store_keeper + user)
+    int nonAdminUserCount = cashierCount + storeKeeperCount + userCount;
+%>
+<% 
     // Load customers count
     CustomerDAO customerDAO = new CustomerDAO();
     int customerCount = customerDAO.getAllCustomers().size();
@@ -49,8 +62,7 @@
             lowStockCount++;
         }
     }
-%>
-<%
+
     Account account = (Account) session.getAttribute("account");
     String name = (account != null) ? account.getFullname() : "Admin";
     int userId = (account != null) ? account.getId() : -1;
@@ -64,6 +76,11 @@ request.setAttribute("billCount", billCount);
 
 int totalItemsSold = billDAO.getTotalItemsSold();
 request.setAttribute("totalItemsSold", totalItemsSold);
+double totalSales = billDAO.getTotalSalesAmount();
+double dailySales = billDAO.getDailySalesAmount();
+double dailyProfit = billDAO.getDailyProfit();
+//Call the method here and store list
+int dailyItemsSold = billDAO.getDailyItemsSold();
 
  %>
  <%SupplierDAO supplierDAO = new SupplierDAO();
@@ -84,6 +101,7 @@ request.setAttribute("totalStock", totalStock);
  request.setAttribute("stockBalancingReport", stockBalancingReport);
  %>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,6 +114,9 @@ request.setAttribute("totalStock", totalStock);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -247,6 +268,13 @@ body {
 			  margin-top: 40px;
 			   color: var(--primary);
     }
+    .card {
+    transition: all 0.3s ease-in-out;
+}
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+    
     </style>
 </head>
 
@@ -278,18 +306,19 @@ body {
     </div>
 </div>
 
-<<!-- Main Content -->
+<!-- Main Content -->
 <div class="main">
-    <h1>Welcome, Admin🧑‍💻 <%= name %></h1>
+    <h1>Welcome, Admin 🧑‍💻 <%= name %></h1>
 
     <!-- Cards row -->
     <div class="row mt-4 g-4">
         <div class="col-md-3">
-            <div class="card-box">
-                <i class="fas fa-users"></i>
-                <h3>Customers <%= customerCount %></h3>
-            </div>
-        </div>
+		    <div class="card-box">
+		        <i class="fas fa-users"></i>
+		        <h3> System Users  <%= nonAdminUserCount %></h3>
+		    </div>
+		</div>
+
 
         <div class="col-md-3">
             <div class="card-box">
@@ -301,7 +330,19 @@ body {
         <div class="col-md-3">
             <div class="card-box">
                 <i class="fas fa-user-shield"></i>
-                <h3>Cashiers <%= cashierCount %></h3>
+                <h3>Admins <%= adminCount %></h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-users"></i>
+                <h3>Customers <%= customerCount %></h3>
+            </div>
+        </div>
+         <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-truck"></i>
+                <h3>Total Suppliers: <%= request.getAttribute("supplierCount") %></h3>
             </div>
         </div>
 
@@ -312,7 +353,6 @@ body {
             </div>
         </div>
 
-        <!-- Out of Stock -->
         <div class="col-md-3 col-sm-6">
             <div class="card-box">
                 <i class="fas fa-exclamation-circle" style="color: #dc3545;"></i>
@@ -329,13 +369,6 @@ body {
 
         <div class="col-md-3">
             <div class="card-box">
-                <i class="fas fa-truck"></i>
-                <h3>Total Suppliers: <%= request.getAttribute("supplierCount") %></h3>
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="card-box">
                 <i class="fas fa-boxes"></i>
                 <h3>Total Items Sold: <%= totalItemsSold %></h3>
             </div>
@@ -347,10 +380,75 @@ body {
                 <h3>Total Stock: <%= request.getAttribute("totalStock") %></h3>
             </div>
         </div>
+        <div class="col-md-3">
+		    <div class="card-box">
+		        <i class="fas fa-receipt"></i>  <!-- icon for bills -->
+		        <h3>Total Items Sold: <%= request.getAttribute("totalItemsSold") != null ? request.getAttribute("totalItemsSold") : "0" %></h3>
+		    </div>
+		</div>
+		
+		<div class="col-md-3">
+		    <div class="card-box">
+		     <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+		        <h3>Today Sold: <%= dailyItemsSold %></h3>
+		    </div>
+		</div>
+		    
         
-    </div> <!-- End Cards Row -->
+     
+<!-- Sales & Profit Cards -->
+<div class="row mt-4 g-4">
+    
+    <!-- Total Sales Amount -->
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="card shadow-sm border-0 rounded-4 p-4 h-100 text-center" style="background-color: #ffffff;background: var(--card-bg);">
+            <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                <i class="fas fa-dollar-sign fa-2x mb-3 text-success"></i>
+                <h6 class="mb-1 fw-normal text-dark">Total Sales Amount</h6>
+                <h4 class="fw-bold text-success">Rs. <%= String.format("%.2f", totalSales) %></h4>
+            </div>
+        </div>
+    </div>
 
-    <!-- Footer should be outside the cards -->
+    <!-- Today's Profit -->
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="card shadow-sm border-0 rounded-4 p-4 h-100 text-center" style="background-color: #ffffff;background: var(--card-bg);">
+            <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                <i class="fas fa-chart-line fa-2x mb-3 text-success"></i>
+                <h6 class="mb-1 fw-normal text-dark">Today's Profit</h6>
+                <h4 class="fw-bold text-success">Rs. <%= String.format("%.2f", dailyProfit) %></h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Sales Total -->
+    <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="card shadow-sm border-0 rounded-4 p-4 h-100 text-center" style="background-color: #ffffff;background: var(--card-bg);">
+            <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                <i class="bi bi-bag-check-fill fa-2x mb-3 text-info"></i>
+                <h6 class="mb-1 fw-normal text-dark">Daily Sales Total</h6>
+                <h4 class="fw-bold text-info">Rs. <%= String.format("%.2f", dailySales) %></h4>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<div class="col-md-12 mt-4">
+    <div class="card shadow-sm border-0 rounded-4 p-4" style="background: linear-gradient(to right, #f5f7fa, #e8f0fe);background: var(--card-bg);color: var(--primary);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-semibold text-primary mb-0">📈 Sales Trend (Last 7 Days)</h5>
+            <i class="fas fa-calendar-week text-primary fs-4"></i>
+        </div>
+        <canvas id="areaChart" height="200"></canvas>
+    </div>
+</div>
+
+
+
+    <!-- Footer -->
     <footer class="py-4 text-center mt-4" style="font-size: 14px; background-color:#181818; border-radius: 8px;">
         <div class="container">
             <p style="color: #ddd; margin-bottom: 5px;">
@@ -363,9 +461,9 @@ body {
         </div>
     </footer>
 </div>
+</div>
 
 
-<!-- Chart Script -->
 
 
 <!-- Mode + Loader Script -->
@@ -412,6 +510,56 @@ body {
     updateDateTime();
     setInterval(updateDateTime, 1000);
 </script>
+
+<script>
+    const ctx = document.getElementById('areaChart');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], // You can make this dynamic
+            datasets: [{
+                label: 'Daily Sales (Rs.)',
+                data: [12000, 9500, 10500, 15500, 13800, 17000, 21000], // Replace with dynamic data
+                fill: true,
+                backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                borderColor: '#2196f3',
+                tension: 0.4,
+                pointBackgroundColor: '#2196f3',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: '#2196f3'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#444'
+                    },
+                    grid: {
+                        color: '#eee'
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: '#444'
+                    },
+                    grid: {
+                        color: '#eee'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
 
 
 

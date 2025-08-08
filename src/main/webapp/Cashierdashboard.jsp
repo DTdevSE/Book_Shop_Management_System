@@ -8,13 +8,15 @@
 
 
 <%
-    // Load all accounts and count roles
     AccountDAO accountDAO = new AccountDAO();
+
+    // Fetch all accounts
     List<Account> allAccounts = accountDAO.getAllAccounts();
 
     int adminCount = 0;
     int cashierCount = 0;
     int storeKeeperCount = 0;
+    int userCount = 0;  // count for role 'user'
 
     for (Account acc : allAccounts) {
         String role = acc.getRole();
@@ -24,9 +26,15 @@
             cashierCount++;
         } else if ("store_keeper".equalsIgnoreCase(role)) {
             storeKeeperCount++;
+        } else if ("user".equalsIgnoreCase(role)) {
+            userCount++;
         }
     }
 
+    // Total non-admin users (cashier + store_keeper + user)
+    int nonAdminUserCount = cashierCount + storeKeeperCount + userCount;
+%>
+<% 
     // Load customers count
     CustomerDAO customerDAO = new CustomerDAO();
     int customerCount = customerDAO.getAllCustomers().size();
@@ -86,6 +94,7 @@ request.setAttribute("totalStock", totalStock);
 <head>
     <meta charset="UTF-8">
     <title>Cashier Dashboard</title>
+     <link rel="icon" type="image/x-icon" href="data:image/webp;base64,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">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- External Libraries -->
@@ -263,30 +272,39 @@ request.setAttribute("totalStock", totalStock);
 
 <!-- Main Content -->
 <div class="main">
-    <h1>Welcome, Cashier🧞 <%= name %></h1>
+    <h1>Welcome, Cashier 🧞 <%= name %></h1>
 
     <div class="row mt-4 g-4">
         <div class="col-md-3">
             <div class="card-box">
                 <i class="fas fa-users"></i>
-                <h3>Customers <%= customerCount %></h3>
+                <h3>System Users: <%= nonAdminUserCount %></h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-users"></i>
+                <h3>Customers: <%= customerCount %></h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-box">
+                <i class="fas fa-user-shield"></i>
+                <h3>Cashiers: <%= cashierCount %></h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card-box">
                 <i class="fas fa-book"></i>
-                <h3>Books <%= books.size() %></h3>
+                <h3>Books: <%= books != null ? books.size() : 0 %></h3>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card-box">
-                <i class="fas fa-user-shield"></i>
-                <h3>Cashiers <%= cashierCount %></h3>
-            </div>
-        </div>
+        
 
+        <!-- Low Stock -->
         <div class="col-md-3 col-sm-6">
             <div class="card-box">
                 <i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i>
@@ -305,14 +323,14 @@ request.setAttribute("totalStock", totalStock);
         <div class="col-md-3">
             <div class="card-box">
                 <i class="fas fa-file-invoice-dollar"></i>
-                <h3>Total Bills: <%= request.getAttribute("billCount") %></h3>
+                <h3>Total Bills: <%= request.getAttribute("billCount") != null ? request.getAttribute("billCount") : 0 %></h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card-box">
                 <i class="fas fa-truck"></i>
-                <h3>Total Suppliers: <%= request.getAttribute("supplierCount") %></h3>
+                <h3>Total Suppliers: <%= request.getAttribute("supplierCount") != null ? request.getAttribute("supplierCount") : 0 %></h3>
             </div>
         </div>
 
@@ -326,22 +344,23 @@ request.setAttribute("totalStock", totalStock);
         <div class="col-md-3">
             <div class="card-box">
                 <i class="fas fa-warehouse"></i>
-                <h3>Total Stock: <%= request.getAttribute("totalStock") %></h3>
+                <h3>Total Stock: <%= request.getAttribute("totalStock") != null ? request.getAttribute("totalStock") : 0 %></h3>
             </div>
         </div>
-        
-       <!-- Footer -->
-		<footer class="py-4 text-center" style="font-size: 14px; background-color:#181818;">
-		  <div class="container">
-		    <p style="color: #343a40;">© 2025 <strong style="color: #FF6F00;">PahanaEdu</strong>. All rights reserved.</p>
-		    <p style="color: #6c757d;">
-		      Developed by <strong style="color: #007BFF;">Dinitha Thewmika</strong>, 
-		      Undergraduate, <em style="color: #28a745;">ICBT Campus</em> 🎓
-		    </p>
-		  </div>
-		</footer>
     </div>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center" style="font-size: 14px; background-color: #181818;">
+        <div class="container">
+            <p style="color: #343a40;">© 2025 <strong style="color: #FF6F00;">PahanaEdu</strong>. All rights reserved.</p>
+            <p style="color: #6c757d;">
+                Developed by <strong style="color: #007BFF;">Dinitha Thewmika</strong>,
+                Undergraduate, <em style="color: #28a745;">ICBT Campus</em> 🎓
+            </p>
+        </div>
+    </footer>
 </div>
+
 
 
 <!-- Scripts -->

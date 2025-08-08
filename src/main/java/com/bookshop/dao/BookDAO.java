@@ -5,6 +5,7 @@ import com.bookshop.model.Supplier;
 import com.bookshop.util.DBConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -539,6 +540,56 @@ public class BookDAO {
             }
         }
         return list;
+    }
+    public double getDailyProfitForDate(LocalDate date) throws SQLException {
+        String sql = "SELECT SUM((bi.price - bi.discount) * bi.quantity) - " +
+                     "SUM(latest_supply.supply_price * bi.quantity) AS daily_profit " +
+                     "FROM bills b " +
+                     "JOIN bill_items bi ON b.bill_id = bi.bill_id " +
+                     "LEFT JOIN ( " +
+                     "   SELECT book_id, MAX(supply_date) AS latest_date " +
+                     "   FROM book_supplier_map GROUP BY book_id " +
+                     ") last_supply ON bi.book_id = last_supply.book_id " +
+                     "LEFT JOIN book_supplier_map latest_supply " +
+                     "   ON bi.book_id = latest_supply.book_id " +
+                     "   AND latest_supply.supply_date = last_supply.latest_date " +
+                     "WHERE DATE(b.billing_timestamp) = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDate(1, java.sql.Date.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble("daily_profit");
+                }
+            }
+        }
+        return 0.0;
+    }
+    public double getTotalProfit() throws SQLException {
+        String sql = "SELECT " +
+                     "SUM((bi.price - bi.discount) * bi.quantity) - " +
+                     "SUM(latest_supply.supply_price * bi.quantity) AS total_profit " +
+                     "FROM bills b " +
+                     "JOIN bill_items bi ON b.bill_id = bi.bill_id " +
+                     "LEFT JOIN ( " +
+                     "   SELECT book_id, MAX(supply_date) AS latest_date " +
+                     "   FROM book_supplier_map " +
+                     "   GROUP BY book_id " +
+                     ") last_supply ON bi.book_id = last_supply.book_id " +
+                     "LEFT JOIN book_supplier_map latest_supply " +
+                     "   ON bi.book_id = latest_supply.book_id " +
+                     "   AND latest_supply.supply_date = last_supply.latest_date";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getDouble("total_profit");
+            }
+        }
+        return 0.0;
     }
 
 }

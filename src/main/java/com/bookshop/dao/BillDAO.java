@@ -5,6 +5,7 @@ import com.bookshop.model.BillItem;
 import com.bookshop.util.DBConnection;
 
 import java.sql.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -275,33 +276,89 @@ public class BillDAO {
         }
         return list;
     }
-    public List<Map<String, Object>> getDailySalesProfit() throws SQLException {
-        String sql = "SELECT DATE(b.billing_timestamp) AS sale_date, " +
-                     "SUM(b.total_amount) AS total_sales, " +
-                     "SUM((bi.price - bi.discount) * bi.quantity) - SUM(bsm.supply_price * bi.quantity) AS total_profit " +
-                     "FROM bills b " +
-                     "JOIN bill_items bi ON b.bill_id = bi.bill_id " +
-                     "LEFT JOIN book_supplier_map bsm ON bi.book_id = bsm.book_id " +
-                     "GROUP BY DATE(b.billing_timestamp) " +
-                     "ORDER BY sale_date DESC";
+   
+    public double getTotalSalesAmount() {
+        double totalSales = 0.0;
+        // This sums the (price * quantity - discount) for all bill_items
+        String sql = "SELECT SUM((price * quantity) - discount) FROM bill_items";
+        
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+             
+            if (rs.next()) {
+                totalSales = rs.getDouble(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSales;
+    }
+    public double getDailySalesAmount() {
+        double dailySales = 0.0;
 
-        List<Map<String, Object>> result = new ArrayList<>();
+        String sql = "SELECT SUM((bi.price * bi.quantity) - bi.discount) AS daily_total " +
+                     "FROM bill_items bi " +
+                     "JOIN bills b ON bi.bill_id = b.bill_id " +
+                     "WHERE DATE(b.billing_timestamp) = CURDATE()";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
-            while (rs.next()) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("date", rs.getDate("sale_date"));
-                map.put("sales", rs.getDouble("total_sales"));
-                map.put("profit", rs.getDouble("total_profit"));
-                result.add(map);
+            if (rs.next()) {
+                dailySales = rs.getDouble("daily_total");
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return result;
+        return dailySales;
     }
+    public double getDailyProfit() {
+        double profit = 0.0;
+        String sql = "SELECT SUM(((bi.price * bi.quantity) - bi.discount) - (IFNULL(bsm.supply_price, 0) * bi.quantity)) AS total_profit " +
+                     "FROM bill_items bi " +
+                     "JOIN bills bl ON bi.bill_id = bl.bill_id " +
+                     "LEFT JOIN book_supplier_map bsm ON bi.book_id = bsm.book_id " +
+                     "WHERE DATE(bl.billing_timestamp) = CURDATE()";
 
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                profit = rs.getDouble("total_profit");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return profit;
+    }
+    public int getDailyItemsSold() {
+        int totalItemsSold = 0;
+
+        String sql = "SELECT SUM(bi.quantity) AS total_items_sold " +
+                     "FROM bill_items bi " +
+                     "JOIN bills b ON bi.bill_id = b.bill_id " +
+                     "WHERE DATE(b.billing_timestamp) = CURDATE()";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                totalItemsSold = rs.getInt("total_items_sold");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return totalItemsSold;
+    }
 }
 
