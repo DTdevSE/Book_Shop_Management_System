@@ -189,4 +189,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-> _Crafted with ❤️ by the Pahana Edu team. For questions, open an issue or contact [maintainer@example.com](mailto:maintainer@example.com)._
+> _Crafted with ❤️ by the Dinitha Thewmika to Pahana Edu team. For questions, open an issue or contact [maintainer@example.com](mailto:dinithabc2001@gmail.com)._
