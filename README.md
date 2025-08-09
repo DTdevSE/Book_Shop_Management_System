@@ -53,7 +53,8 @@ Designed for production use in educational bookstores — multi-role dashboards 
 
 ## 🏗 Architecture (3-Tier + Patterns)
 
-![3-Tier architecture]([docs/architecture/3-tier-architecture.png](https://drive.google.com/file/d/1CYIlNvpfL_n0TepSgTy0GSYY3Hnf1iJB/view?usp=sharing))
+![3-Tier architecture](https://drive.google.com/uc?export=view&id=1CYIlNvpfL_n0TepSgTy0GSYY3Hnf1iJB)
+
 
 **Layers**
 1. **Presentation (Client)** — JSP + Bootstrap: role-based dashboards, client-side validation & animations.
