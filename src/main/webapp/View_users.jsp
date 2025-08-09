@@ -3,7 +3,14 @@
 
 <%
     AccountDAO dao = new AccountDAO();
-    List<Account> accounts = dao.getAllAccounts();
+    String keyword = request.getParameter("search");
+    List<Account> accounts;
+
+    if (keyword != null && !keyword.trim().isEmpty()) {
+       accounts = dao.searchAccounts(keyword.trim());
+    } else {
+        accounts = dao.getAllAccounts();
+    }
 %>
 
 <!DOCTYPE html>
@@ -75,6 +82,21 @@
         </a>
     </div>
 
+    <!-- 🔍 Search Form -->
+    <form method="get" action="View_users.jsp" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search by name, ID, or role..." value="<%= request.getParameter("search") != null ? request.getParameter("search") : "" %>">
+            <button class="btn btn-outline-primary" type="submit">🔍 Search</button>
+            <a href="View_users.jsp" class="btn btn-outline-secondary">🔁 Reset</a>
+        </div>
+    </form>
+
+    <!-- 📝 Search Info -->
+    <c:if test="${not empty param.search}">
+        <p><strong>🔎 Search results for:</strong> "<c:out value='${param.search}' />"</p>
+    </c:if>
+
+    <!-- 👥 User Cards -->
     <div class="row g-4">
         <%
             if (accounts != null && !accounts.isEmpty()) {

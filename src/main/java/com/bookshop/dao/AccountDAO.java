@@ -282,6 +282,40 @@ public class AccountDAO {
 	        }
 	        return 0;
 	    }
+	    public List<Account> searchAccounts(String keyword) {
+	        List<Account> accounts = new ArrayList<>();
+	        String sql = "SELECT * FROM accounts WHERE fullname LIKE ? OR id_number LIKE ? OR role LIKE ?";
+
+	        try (Connection conn = DBConnection.getConnection(); // make sure you're not using DBUtil unless that's defined
+	             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+	            String searchPattern = "%" + keyword + "%";
+	            stmt.setString(1, searchPattern);
+	            stmt.setString(2, searchPattern);
+	            stmt.setString(3, searchPattern);
+
+	            ResultSet rs = stmt.executeQuery();
+
+	            while (rs.next()) {
+	                Account acc = new Account();
+	                acc.setFullname(rs.getString("fullname"));
+	                acc.setIdNumber(rs.getString("id_number"));
+	                acc.setRole(rs.getString("role"));
+	                acc.setDob(rs.getDate("dob"));
+	                acc.setAddress(rs.getString("address"));
+	                acc.setProfileImage(rs.getString("profile_image"));
+	                acc.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+
+	                accounts.add(acc);
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return accounts;
+	    }
+
 
 	}
 

@@ -15,7 +15,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Account</title>
+    <title>✏️ Edit Account</title>
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -29,12 +30,12 @@
             margin: auto;
             background-color: #ffffff;
             padding: 35px;
-            border-radius: 10px;
+            border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: #1e1e1e;
             border-bottom: 2px solid #444;
             padding-bottom: 10px;
@@ -49,7 +50,8 @@
 
         input[type="text"],
         input[type="password"],
-        input[type="date"] {
+        input[type="date"],
+        input[type="file"] {
             width: 100%;
             padding: 10px 12px;
             margin-top: 6px;
@@ -67,7 +69,7 @@
 
         button {
             margin-top: 30px;
-            background-color: #333;
+            background-color: #28a745;
             color: white;
             border: none;
             padding: 12px 24px;
@@ -78,7 +80,7 @@
         }
 
         button:hover {
-            background-color: #1f1f1f;
+            background-color: #218838;
         }
 
         .error-message {
@@ -91,40 +93,69 @@
             border-radius: 6px;
             margin-top: 40px;
         }
+
+        .emoji-label {
+            margin-right: 6px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+            text-decoration: none;
+            color: #333;
+        }
+        .back-btn i {
+            margin-right: 6px;
+        }
+        .back-btn:hover {
+            background-color: #ddd;
+            color: #000;
+        }
     </style>
 </head>
 <body>
 
 <div class="form-container">
-    <h2>Edit Account</h2>
+    <h2>✏️ Edit User Account</h2>
+     <!-- Back Button -->
+            <a href="AdminHome.jsp" class="back-btn" title="Go Back">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
 
     <% if (account != null) { %>
         <form action="UpdateAccountServlet" method="post" enctype="multipart/form-data">
             <input type="hidden" name="idNumber" value="<%= account.getIdNumber() %>" />
 
-            <label>Full Name:</label>
+            <label><span class="emoji-label">👤</span>Full Name:</label>
             <input type="text" name="fullname" value="<%= account.getFullname() %>" required />
 
-            <label>Date of Birth:</label>
+            <label><span class="emoji-label">🎂</span>Date of Birth:</label>
             <input type="date" name="dob" value="<%= account.getDob() %>" required />
 
-            <label>Address:</label>
+            <label><span class="emoji-label">🏠</span>Address:</label>
             <input type="text" name="address" value="<%= account.getAddress() %>" required />
 
-            <label>Password:</label>
+            <label><span class="emoji-label">🔐</span>Password:</label>
             <input type="password" name="password" value="<%= account.getPassword() %>" required />
 
-            <label>Role:</label>
+            <label><span class="emoji-label">🧑‍💼</span>Role:</label>
             <input type="text" name="role" value="<%= account.getRole() %>" required />
 
-             <label for="profileImage">Profile Image</label>
-    <input type="file" name="profileImage" class="form-control"/>
+            <label><span class="emoji-label">🖼️</span>Profile Image:</label>
+            <input type="file" name="profileImage" class="form-control"/>
 
-
-            <button type="submit">Update Account</button>
+            <button type="submit">✅ Update Account</button>
         </form>
     <% } else { %>
-        <div class="error-message">⚠ Account not found for ID: <strong><%= idNumber %></strong></div>
+        <div class="error-message">
+            ⚠️ Account not found for ID: <strong><%= idNumber %></strong>
+        </div>
     <% } %>
 </div>
 

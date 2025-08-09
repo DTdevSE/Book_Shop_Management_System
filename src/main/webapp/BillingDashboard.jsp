@@ -226,10 +226,10 @@
             👤 Select a Customer
         </button>
         
-        <!-- Search input outside ul -->
-        <div class="p-3" style="width: 100%;">
-            <input type="text" class="form-control" id="customerSearchInput" placeholder="Search customer..." />
-        </div>
+        <!-- Search input hidden -->
+<div class="p-3" style="width: 100%; display: none;">
+    <input type="text" id="customerSearchInput" placeholder="Search customer..." />
+</div>
 
         <ul class="dropdown-menu p-3" style="width: 100%;">
             <% if (customers != null && !customers.isEmpty()) {

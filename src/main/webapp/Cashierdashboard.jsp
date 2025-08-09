@@ -259,7 +259,7 @@ request.setAttribute("totalStock", totalStock);
     
     <a href="BillingDashboard.jsp"><i class="fa fa-file-invoice"></i> Billing  Payment</a>
     <a href="CashierBilling_History.jsp"><i class="fa fa-history"></i> Billing History</a>
-    <a href="#help"><i class="fa fa-question-circle"></i> Help</a>
+    <a href="#help"><i class="fa fa-question-circle"></i> Get Help</a>
     <a href="AdminLogout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a>
     <div id="dateTime" class="datetime"></div>
     <div class="text-center mt-5 mb-3">

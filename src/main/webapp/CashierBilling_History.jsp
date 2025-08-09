@@ -87,10 +87,16 @@
     <% } %>
 
     <form action="SearchBillServlet" method="get" class="input-group mb-4">
-        <input type="text" name="customerId" class="form-control" placeholder="Enter Customer ID" required
-               value="<%= request.getParameter("customerId") != null ? request.getParameter("customerId") : "" %>">
-        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i> Search</button>
-    </form>
+    <input type="text" name="customerId" class="form-control" placeholder="Enter Customer ID" required
+           value="<%= request.getParameter("customerId") != null ? request.getParameter("customerId") : "" %>">
+    <button class="btn btn-outline-primary" type="submit">
+        <i class="bi bi-search"></i> Search
+    </button>
+    <a href="CashierBilling_History.jsp" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-clockwise"></i> Reset
+    </a>
+</form>
+
 
     <% if (customer != null) { %>
         <div class="card mb-4 p-3">

@@ -404,7 +404,7 @@ body {
         <div class="card shadow-sm border-0 rounded-4 p-4 h-100 text-center" style="background-color: #ffffff;background: var(--card-bg);">
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                 <i class="fas fa-dollar-sign fa-2x mb-3 text-success"></i>
-                <h6 class="mb-1 fw-normal text-dark">Total Sales Amount</h6>
+                <h6 class="mb-1 fw-normal text-light">Total Sales Amount</h6>
                 <h4 class="fw-bold text-success">Rs. <%= String.format("%.2f", totalSales) %></h4>
             </div>
         </div>
@@ -415,7 +415,7 @@ body {
         <div class="card shadow-sm border-0 rounded-4 p-4 h-100 text-center" style="background-color: #ffffff;background: var(--card-bg);">
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                 <i class="fas fa-chart-line fa-2x mb-3 text-success"></i>
-                <h6 class="mb-1 fw-normal text-dark">Today's Profit</h6>
+                <h6 class="mb-1 fw-normal text-light">Today's Profit</h6>
                 <h4 class="fw-bold text-success">Rs. <%= String.format("%.2f", dailyProfit) %></h4>
             </div>
         </div>
@@ -426,7 +426,7 @@ body {
         <div class="card shadow-sm border-0 rounded-4 p-4 h-100 text-center" style="background-color: #ffffff;background: var(--card-bg);">
             <div class="d-flex flex-column align-items-center justify-content-center h-100">
                 <i class="bi bi-bag-check-fill fa-2x mb-3 text-info"></i>
-                <h6 class="mb-1 fw-normal text-dark">Daily Sales Total</h6>
+                <h6 class="mb-1 fw-normal text-light">Daily Sales Total</h6>
                 <h4 class="fw-bold text-info">Rs. <%= String.format("%.2f", dailySales) %></h4>
             </div>
         </div>

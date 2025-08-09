@@ -1,0 +1,92 @@
+# 📚 Pahana Edu — Online Billing System
+
+> A production-ready, Java OOP web application (MVC) for bookstore billing & inventory management.      
+>  
+> Deployed on **Apache Tomcat 9**. RESTful APIs expose business functions for distributed clients.
+
+[![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=openjdk)](https://adoptium.net/)
+[![Tomcat](https://img.shields.io/badge/Tomcat-9.0-yellow?style=for-the-badge&logo=apachetomcat)](https://tomcat.apache.org/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/yourusername/PahanaEdu/ci.yml?branch=main&style=for-the-badge)](https://github.com/yourusername/PahanaEdu/actions)
+
+---
+
+## 🚀 Quick demo (animated)
+> Replace these placeholders with real GIFs (record dashboards using LICEcap / ScreenToGif / OBS and add to `/docs/gifs/`)
+
+![Dashboard animation (placeholder)](docs/gifs/dashboard-demo.gif)
+![Billing flow (placeholder)](docs/gifs/billing-flow.gif)
+
+> Tip: For lightweight, smooth animation use **Lottie** (export from After Effects with Bodymovin) and host `.json` in `docs/animations/`. Use on website / GitHub Pages — GitHub READMEs can show GIFs/SVGs; Lottie needs a webpage wrapper.
+
+---
+
+## 📌 Table of Contents
+- [About](#about)  
+- [Architecture](#architecture)  
+- [Highlights & Features](#highlights--features)  
+- [Getting Started](#getting-started)  
+  - [Prerequisites](#prerequisites)  
+  - [Local Setup (Docker)](#local-setup-docker)  
+- [API Endpoints](#api-endpoints)  
+- [Database Schema](#database-schema)  
+- [Testing & Quality](#testing--quality)  
+- [CI / CD](#ci--cd)  
+- [Security & Production Notes](#security--production-notes)  
+- [Performance & Monitoring](#performance--monitoring)  
+- [Roadmap / Enhancements](#roadmap--enhancements)  
+- [Contributing](#contributing)  
+- [License](#license)
+
+--- 
+                
+
+## 📘 About
+**Pahana Edu** is a modular, extensible billing system built with:
+- Java (Servlets + JSP), JDBC (HikariCP pool)
+- MVC pattern, DAO layer, Factory & Singleton patterns
+- RESTful APIs for distributed clients
+- MySQL / PostgreSQL support
+
+Designed for production use in educational bookstores — multi-role dashboards (Admin, Cashier, StoreKeeper), inventory control, billing, supplier mapping, and reporting.
+
+---
+
+## 🏗 Architecture (3-Tier + Patterns)
+
+![3-Tier architecture](docs/architecture/3-tier-architecture.png)
+
+**Layers**
+1. **Presentation (Client)** — JSP + Bootstrap: role-based dashboards, client-side validation & animations.
+2. **Application (Tomcat)** — Servlets (controllers), Services (business logic), REST endpoints, DAO layer for persistence.
+3. **Data (DB)** — MySQL/Postgres accessed via JDBC + HikariCP.
+
+**Design patterns**: MVC, DAO, Factory, Singleton, Service Layer.
+
+---
+
+## ✨ Highlights & Features
+- ✅ Role-based dashboards (Admin, Cashier, StoreKeeper)  
+- ✅ Billing with line items, discounts, and history  
+- ✅ Inventory: stock counts, low-stock alerts, supplier mapping  
+- ✅ REST APIs (JSON) for external clients  
+- ✅ Dark/Light UI toggle + animated counters and card hover effects  
+- ✅ Connection pooling (HikariCP) + centralized DAOFactory  
+- ✅ Sample SQL seed data & migration scripts
+
+---
+
+## 🛠 Getting Started
+
+### Prerequisites
+- Java 17+ (OpenJDK/Adoptium)  
+- Apache Tomcat 9.x  
+- MySQL 8+ (or PostgreSQL)  
+- Maven 3.6+  
+- (Optional) Docker & Docker Compose
+
+### Local setup — Docker (recommended)
+1. Copy `.env.example` → `.env` and configure DB credentials.
+2. Start DB:
+```bash
+docker-compose up -d

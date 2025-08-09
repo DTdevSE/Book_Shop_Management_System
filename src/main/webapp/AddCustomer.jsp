@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Register Customer</title>
+    <title>🧾 Register Customer</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -69,45 +69,46 @@
 </head>
 <body>
 <div class="container">
-    <h2>Register New Customer</h2>
+
+    <h2>🧾 Register New Customer</h2>
     <form action="AddCustomer" method="post" enctype="multipart/form-data">
-        <label for="name">Full Name *</label>
+        <label for="name">👤 Full Name *</label>
         <input type="text" name="name" id="name" required maxlength="100">
 
-        <label for="email">Email (unique)</label>
+        <label for="email">📧 Email (unique)</label>
         <input type="email" name="email" id="email" maxlength="150">
 
-        <label for="address">Address</label>
+        <label for="address">🏠 Address</label>
         <textarea name="address" id="address" rows="2" maxlength="255"></textarea>
 
-        <label for="telephone">Telephone *</label>
+        <label for="telephone">📞 Telephone *</label>
         <input type="tel" name="telephone" id="telephone" required maxlength="15">
 
-        <label for="password">Password *</label>
+        <label for="password">🔒 Password *</label>
         <input type="password" name="password" id="password" required maxlength="255">
 
-        <label for="profileImage">Profile Image</label>
+        <label for="profileImage">🖼️ Profile Image</label>
         <input type="file" name="profileImage" id="profileImage" accept="image/*">
 
-        <label for="gender">Gender</label>
+        <label for="gender">⚧️ Gender</label>
         <select name="gender" id="gender">
             <option value="" selected disabled>-- Select Gender --</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
+            <option value="male">♂️ Male</option>
+            <option value="female">♀️ Female</option>
+            <option value="other">⚧️ Other</option>
         </select>
 
-        <label for="dob">Date of Birth</label>
+        <label for="dob">🎂 Date of Birth</label>
         <input type="date" name="dob" id="dob">
 
-        <label for="membershipType">Membership Type</label>
+        <label for="membershipType">💳 Membership Type</label>
         <select name="membershipType" id="membershipType">
-            <option value="regular" selected>Regular</option>
-            <option value="premium">Premium</option>
-            <option value="vip">VIP</option>
+            <option value="regular" selected>🟢 Regular</option>
+            <option value="premium">🌟 Premium</option>
+            <option value="vip">👑 VIP</option>
         </select>
 
-        <button type="submit">Register Customer</button>
+        <button type="submit">✅ Register Customer</button>
     </form>
 </div>
 </body>

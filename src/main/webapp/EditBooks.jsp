@@ -20,8 +20,9 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Edit Book</title>
+    <title>✏️ Edit Book</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
         body {
             background-color: #f9f9fb;
@@ -51,6 +52,26 @@
             background-color: #ced4da;
             border: none;
         }
+         .back-btn {
+            display: inline-flex;
+            align-items: center;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+            text-decoration: none;
+            color: #333;
+        }
+        .back-btn i {
+            margin-right: 6px;
+        }
+        .back-btn:hover {
+            background-color: #ddd;
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -65,55 +86,56 @@
             <a href="ViewBooks.jsp" class="btn btn-secondary">← Back to Book List</a>
         <% } else { %>
 
-        <div class="card p-4">
-            <h3 class="mb-4 text-primary">✏️ Edit Book</h3>
+       
+            <h3 class="mb-4 text-primary">📘 Edit Book Details</h3>
+            
 
             <form action="UpdateBookServlet" method="post" enctype="multipart/form-data" class="row g-4">
                 <input type="hidden" name="id" value="<%= book.getId() %>" />
 
                 <div class="col-md-6">
-                    <label class="form-label">Book Name</label>
+                    <label class="form-label">📕 Book Name</label>
                     <input type="text" name="name" value="<%= book.getName() %>" class="form-control" required />
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Category</label>
+                    <label class="form-label">📚 Category</label>
                     <input type="text" name="category" value="<%= book.getCategory() %>" class="form-control" required />
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label">Author</label>
+                    <label class="form-label">✍️ Author</label>
                     <input type="text" name="author" value="<%= book.getAuthor() %>" class="form-control" required />
                 </div>
 
                 <div class="col-md-12">
-                    <label class="form-label">Description</label>
+                    <label class="form-label">📝 Description</label>
                     <textarea name="description" class="form-control" rows="4" required><%= book.getDescription() %></textarea>
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label">Price ($)</label>
+                    <label class="form-label">💰 Price ($)</label>
                     <input type="number" name="price" value="<%= book.getPrice() %>" step="0.01" class="form-control" required />
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label">Discount (%)</label>
+                    <label class="form-label">🔻 Discount (%)</label>
                     <input type="number" name="discount" value="<%= book.getDiscount() %>" step="0.01" class="form-control" required />
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label">Offers</label>
+                    <label class="form-label">🎁 Offers</label>
                     <input type="text" name="offers" value="<%= book.getOffers() != null ? book.getOffers() : "" %>" class="form-control" />
                 </div>
 
                 <div class="col-md-4">
-                    <label class="form-label">Stock Quantity</label>
+                    <label class="form-label">📦 Stock Quantity</label>
                     <input type="number" name="stock_quantity" value="<%= book.getStockQuantity() %>" class="form-control" required />
                 </div>
 
                 <div class="col-12 mt-3 d-flex justify-content-between">
                     <button type="submit" class="btn btn-primary px-4">💾 Update Book</button>
-                    <a href="ViewBooks.jsp" class="btn btn-secondary px-4">Cancel</a>
+                    <a href="ViewBooks.jsp" class="btn btn-secondary px-4">↩️ Cancel</a>
                 </div>
             </form>
         </div>

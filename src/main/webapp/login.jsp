@@ -99,7 +99,7 @@
     </c:if>
 
     <form action="LoginServlet" method="post">
-        <input type="text" name="id_number" placeholder="Username" required />
+        <input type="text" name="id_number" placeholder="UserID" required />
         <input type="password" name="password" placeholder="Password" required />
         <button type="submit">Login</button>
     </form>
