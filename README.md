@@ -116,7 +116,6 @@ See [API Docs](docs/api.md) for full details.
 
 ## 🗄 Database Schema
 
-![ER Diagram](docs/architecture/er-diagram.png)
 
 - **Users**: id, username, password, role
 - **Books**: id, title, author, price, stock
