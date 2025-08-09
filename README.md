@@ -53,7 +53,7 @@ Designed for production use in educational bookstores — multi-role dashboards 
 
 ## 🏗 Architecture (3-Tier + Patterns)
 
-![3-Tier architecture](https://drive.google.com/uc?export=view&id=1CYIlNvpfL_n0TepSgTy0GSYY3Hnf1iJB)
+
 
 
 **Layers**
