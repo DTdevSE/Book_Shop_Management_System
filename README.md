@@ -179,7 +179,7 @@ Migration scripts: [`/db/migrations/`](db/migrations/)
 3. Commit & push changes
 4. Open a Pull Request
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
 
 ---
 
