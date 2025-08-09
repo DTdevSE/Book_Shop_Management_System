@@ -81,6 +81,14 @@ public class Book {
 
     public Supplier getSupplier() { return supplier; }
     public void setSupplier(Supplier supplier) { this.supplier = supplier; }
+    
+    public String getImageUrl(String contextPath) {
+        if (images != null && !images.isEmpty()) {
+            return contextPath + "/images/books/" + images.get(0);
+        }
+        return contextPath + "/images/books/default.jpg";
+    }
+
 
     @Override
     public String toString() {

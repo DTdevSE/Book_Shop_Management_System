@@ -15,6 +15,8 @@
 <head>
     <meta charset="UTF-8" />
     <title>My Profile</title>
+    <link rel="icon" type="image/png" href="https://img.favpng.com/0/24/24/user-clip-art-png-favpng-W8qfp3AmEqYe35XjTHNFA5M43_t.jpg" />
+    <link rel="icon" type="image/png" href="https://static.vecteezy.com/system/resources/previews/024/043/963/original/book-icon-clipart-transparent-background-free-png.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
     <style>

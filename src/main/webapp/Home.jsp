@@ -13,7 +13,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BookVault – Explore. Read. Grow.</title>
+   <title>BookVault – Explore. Read. Grow.</title>
+    <link rel="icon" type="image/png" href="https://static.vecteezy.com/system/resources/previews/024/043/963/original/book-icon-clipart-transparent-background-free-png.png" />
+  
 
   <!-- Google Fonts: Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />

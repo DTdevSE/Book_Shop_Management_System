@@ -6,6 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Customer Login</title>
+    <link rel="icon" type="image/png" href="https://icon-library.com/images/icon-customer/icon-customer-15.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {
