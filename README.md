@@ -14,7 +14,7 @@
 ## 🚀 Quick Demo (Animated)
 > Replace these placeholders with real GIFs (record dashboards using LICEcap / ScreenToGif / OBS and add to `/docs/gifs/`)
 
-![Dashboard animation (placeholder)](docs/gifs/dashboard-demo.gif)
+![Dashboard animation](https://drive.google.com/uc?export=view&id=1WZfXn0MzVdmK-4qK_1IEisqQ9PDbCmU6)  
 ![Billing flow (placeholder)](docs/gifs/billing-flow.gif)
 
 > Tip: For lightweight, smooth animation use **Lottie** (export from After Effects with Bodymovin) and host `.json` in `docs/animations/`. Use on website / GitHub Pages — GitHub READMEs can show GIFs/SVGs; Lottie needs a webpage wrapper.
