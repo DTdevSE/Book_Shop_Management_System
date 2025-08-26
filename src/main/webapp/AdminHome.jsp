@@ -259,7 +259,7 @@ body {
 			  font-size: 10px;
 			  color: #fff;
 			  background: rgba(255, 255, 255, 0.1); /* semi-transparent */
-			  padding: 10px 15px;
+			  padding: 10px 10px;
 			  border-radius: 12px;
 			  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 			  backdrop-filter: blur(8px); /* modern blur effect */
@@ -293,11 +293,12 @@ body {
     <a href="View_users.jsp"><i class="fas fa-user"></i> Manage Users</a>
     <a href="View_books.jsp"><i class="fas fa-book"></i> Manage Books</a>
    
-    <a href="pendingPayments.jsp"><i class="fas fa-file-invoice"></i> Billing</a>
-    <a href="Help.jsp"><i class="fas fa-question-circle"></i> Help</a>
+    <a href="AdminBillingSummery.jsp"><i class="fas fa-file-invoice"></i> Billing</a>
+    <a href="AdminHelp.jsp"><i class="fas fa-question-circle"></i> Help</a>
     <a href="AdminLogout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a>
     <!-- Admin Profile Info -->
 <div id="dateTime" class="datetime"></div>
+
     <div class="text-center mt-5 mb-3">
         <img src="<%= profileImg %>" alt="Admin"
              style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 2px solid #fff;margin-top: 120px;">
@@ -383,7 +384,7 @@ body {
         <div class="col-md-3">
 		    <div class="card-box">
 		        <i class="fas fa-receipt"></i>  <!-- icon for bills -->
-		        <h3>Total Items Sold: <%= request.getAttribute("totalItemsSold") != null ? request.getAttribute("totalItemsSold") : "0" %></h3>
+		        <h3>Monthly Items Sold: <%= request.getAttribute("totalItemsSold") != null ? request.getAttribute("totalItemsSold") : "0" %></h3>
 		    </div>
 		</div>
 		

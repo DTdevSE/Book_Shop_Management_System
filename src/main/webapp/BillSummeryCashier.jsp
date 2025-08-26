@@ -155,7 +155,10 @@
 
     <!-- Buttons (hide in PDF) -->
     <div class="d-flex justify-content-between mt-4 no-print">
-        <a href="BillingDashboard.jsp" class="btn btn-outline-primary">⬅️ Back to Dashboard</a>
+   <a href="SearchBillServlet" class="btn btn-outline-primary">
+    ⬅️ Back to Dashboard
+</a>
+
         <div>
             <!--  <button class="btn btn-success" onclick="window.print()">🖨️ Print Bill</button>-->
             <button class="btn btn-danger" onclick="downloadPDF()">💾 Download PDF</button>
@@ -212,6 +215,8 @@ function downloadPDF() {
     };
     html2pdf().set(opt).from(clone).save();
 }
+
+
 </script>
 
 </body>

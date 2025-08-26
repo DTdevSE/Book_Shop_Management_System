@@ -25,7 +25,7 @@ public class CustomerLoginServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("loggedCustomer", customer);
                 session.setAttribute("customerName", customer.getName());
-                session.setAttribute("customerId", customer.getAccountNumber());  // Add this for easy access
+                session.setAttribute("customerId", customer.getAccountNumber());
 
                 String profileImage = customer.getProfileImage();
                 if (profileImage == null || profileImage.trim().isEmpty()) {
@@ -33,17 +33,20 @@ public class CustomerLoginServlet extends HttpServlet {
                 }
                 session.setAttribute("profileImage", profileImage);
 
-                // ✅ Redirect to home after login
                 response.sendRedirect("Home.jsp");
             } else {
-                request.setAttribute("error", "Invalid account number or password");
-                request.getRequestDispatcher("Login.jsp").forward(request, response);
+                // Use request attribute, because we forward (not redirect)
+                request.setAttribute("error", " Invalid account number or password");
+                request.getRequestDispatcher("CustomerLogin.jsp").forward(request, response);
             }
 
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", " Account number must be numeric");
+            request.getRequestDispatcher("CustomerLogin.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Login error. Please try again.");
-            request.getRequestDispatcher("Login.jsp").forward(request, response);
+            request.setAttribute("error", " Login error. Please try again.");
+            request.getRequestDispatcher("CustomerLogin.jsp").forward(request, response);
         }
     }
 }

@@ -591,6 +591,49 @@ public class BookDAO {
         }
         return 0.0;
     }
+    public List<Book> searchBooks(String keyword) {
+        List<Book> books = new ArrayList<>();
+        String sql = "SELECT * FROM books WHERE id LIKE ? OR name LIKE ? OR author LIKE ? OR category LIKE ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            String pattern = "%" + keyword + "%";
+            ps.setString(1, pattern);
+            ps.setString(2, pattern);
+            ps.setString(3, pattern);
+            ps.setString(4, pattern);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Book book = new Book();
+                    int bookId = rs.getInt("id");
+
+                    book.setId(bookId);
+                    book.setName(rs.getString("name"));
+                    book.setAuthor(rs.getString("author"));
+                    book.setCategory(rs.getString("category"));
+                    book.setDescription(rs.getString("description"));
+                    book.setPrice(rs.getDouble("price"));
+                    book.setDiscount(rs.getDouble("discount"));
+                    book.setOffers(rs.getString("offers"));
+                    book.setStockQuantity(rs.getInt("stock_quantity"));
+                    book.setUploadDateTime(rs.getTimestamp("upload_date_time").toLocalDateTime());
+
+                    // Load images
+                    book.setImages(getBookImages(bookId));
+
+                    books.add(book);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return books;
+    }
+
 
 }
 

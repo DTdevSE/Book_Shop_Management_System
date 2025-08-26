@@ -288,7 +288,7 @@ table td {
 
         <div class="col-md-3">
             <div class="card-box">
-                <i class="fas fa-exclamation-triangle" style="color: #dc3545;"></i>
+                <i class="fas fa-exclamation-triangle" style="color: #ffc107;"></i>
                 <h3>Low Stock Books: <span style="color: #dc3545;"><%= lowStockCount %></span></h3>
             </div>
         </div>
@@ -329,6 +329,7 @@ table td {
         <h3>Total Stock: <%= request.getAttribute("totalStock") %></h3>
     </div>
 </div>
+
        
      <h3 class="text-center mt-5">📦 Daily Stock Balancing Report</h3>
 
@@ -395,7 +396,7 @@ table td {
             <span class="stock-badge out-stock" title="Out of Stock"><%= outOfStockCount %></span>
         <% } %>
     </a>
-    <a href="#"><i class="fa fa-question-circle"></i> Help</a>
+    <a href="StoreKeeperHelp.jsp"><i class="fa fa-question-circle"></i> Help</a>
     <a href="AdminLogout.jsp"><i class="fas fa-sign-out-alt"></i> Logout</a>
     
     <div id="dateTime" class="datetime"></div>

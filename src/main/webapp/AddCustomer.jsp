@@ -1,8 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>🧾 Register Customer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -65,10 +68,39 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        /* Corrected back button style */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .back-btn i {
+            margin-right: 6px;
+        }
+
+        .back-btn:hover {
+            background-color: #ddd;
+            color: #000;
+        }
     </style>
 </head>
 <body>
 <div class="container">
+    <!-- Back Button -->
+    <a href="View_customers.jsp" class="back-btn" title="Go Back">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
 
     <h2>🧾 Register New Customer</h2>
     <form action="AddCustomer" method="post" enctype="multipart/form-data">

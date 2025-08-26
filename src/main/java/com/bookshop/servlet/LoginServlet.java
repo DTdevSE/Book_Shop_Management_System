@@ -29,7 +29,13 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("account", account);
             session.setAttribute("role", role);
             session.setAttribute("loginTime", LocalDateTime.now());
-
+         // ✅ Add username for chat
+            session.setAttribute("username", account.getFullname()); 
+            session.setAttribute("username", account.getProfileImage());
+            session.setAttribute("username", account.getFullname());      // ✅ store username
+            session.setAttribute("role", account.getRole());              // ✅ store role
+            session.setAttribute("profileImage", account.getProfileImage()); // ✅ store profile image    
+            session.setAttribute("loginTime", LocalDateTime.now());
             switch (role.toLowerCase()) {
                 case "admin":
                     response.sendRedirect("AdminHome.jsp");
@@ -45,6 +51,7 @@ public class LoginServlet extends HttpServlet {
                     break;
                 default:
                     session.setAttribute("error", "Unknown user role.");
+                    
                     response.sendRedirect("login.jsp");
             }
         } else {

@@ -32,7 +32,7 @@ public class SupplierServlet extends HttpServlet {
                 s.setPhone(request.getParameter("phone"));
                 s.setAddress(request.getParameter("address"));
                 dao.addSupplier(s);
-
+                request.getSession().setAttribute("success", "✅ Supplier added successfully!");
             } else if (action.startsWith("update_")) {
                 // Extract supplierId from action like "update_12"
                 int supplierId = Integer.parseInt(action.substring("update_".length()));
@@ -50,11 +50,12 @@ public class SupplierServlet extends HttpServlet {
                 s.setAddress(address);
 
                 dao.updateSupplier(s);
-
+                request.getSession().setAttribute("success", "✏️  updated successfully!");
             } else if (action.startsWith("delete_")) {
                 // Extract supplierId from action like "delete_12"
                 int supplierId = Integer.parseInt(action.substring("delete_".length()));
                 dao.deleteSupplier(supplierId);
+                request.getSession().setAttribute("success", "🗑️ Supplier deleted successfully!");
             }
         } catch (Exception e) {
             e.printStackTrace();

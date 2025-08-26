@@ -4,11 +4,18 @@
 
 <%
     BookDAO dao = new BookDAO();
-    List<Book> books = dao.getAllBooks();
+    String search = request.getParameter("search");
+    List<Book> books;
 
-    // Gson instance to convert Java list to JSON string
+    if (search != null && !search.trim().isEmpty()) {
+        books = dao.searchBooks(search.trim());
+    } else {
+        books = dao.getAllBooks();
+    }
+
     Gson gson = new Gson();
 %>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -102,7 +109,16 @@
         <h2>📚 All Books</h2>
         <a href="AddBooks.jsp" class="btn btn-success">➕ Add New Book</a>
     </div>
-
+  <!-- 🔍 Search Form -->
+    <form method="get" action="View_books.jsp" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" 
+                   placeholder="Search by name, ID, author, or category..."
+                   value="<%= (search != null) ? search : "" %>">
+            <button class="btn btn-outline-primary" type="submit">🔍 Search</button>
+            <a href="View_books.jsp" class="btn btn-outline-secondary">🔁 Reset</a>
+        </div>
+    </form>
     <div class="row g-4">
         <% if (books != null && !books.isEmpty()) {
             for (Book book : books) {

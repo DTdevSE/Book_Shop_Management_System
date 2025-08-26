@@ -6,15 +6,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Login Page</title>
-      <link rel="icon" type="image/png" href="https://e7.pngegg.com/pngimages/9/763/png-clipart-computer-icons-login-user-system-administrator-admin-desktop-wallpaper-megaphone-thumbnail.png" />
+    <link rel="icon" type="image/png" href="https://e7.pngegg.com/pngimages/9/763/png-clipart-computer-icons-login-user-system-administrator-admin-desktop-wallpaper-megaphone-thumbnail.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         * {
             box-sizing: border-box;
         }
 
         body {
-           margin: 0;
+            margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
@@ -37,6 +38,8 @@
             width: 100%;
             max-width: 400px;
             color: white;
+            position: relative;
+            z-index: 2;
         }
 
         .login-container h2, .login-container p {
@@ -80,14 +83,64 @@
             background-color: #e68a00;
         }
 
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 30px 20px;
-            }
+        /* Loader Styling */
+        .loader-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(32, 38, 40, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            display: none; /* Hidden by default */
+        }
+
+        .loader-circle-24 {
+            width: 70px;
+            height: 70px;
+            position: relative;
+        }
+        .loader-circle-24:before {
+            border-radius: 50%;
+            border-top: 5px solid #bbb;
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            height: 80%;
+            width: 80%;
+            animation: loader-circle-24_rotation 2s linear infinite;
+        }
+        .loader-circle-24:after {
+            border-radius: 50%;
+            border-bottom: 5px solid #bbb;
+            content: " ";
+            display: block;
+            height: 100%;
+            width: 100%;
+            animation: loader-circle-24_rotation-reverse 2s linear infinite;
+            position: absolute;
+            top: 0;
+        }
+        @keyframes loader-circle-24_rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes loader-circle-24_rotation-reverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
         }
     </style>
 </head>
 <body id="bg">
+
+<!-- Loader -->
+<div class="loader-overlay" id="loader">
+    <div class="loader-circle-24"></div>
+</div>
 
 <div class="login-container">
     <h2>Login</h2>
@@ -99,7 +152,7 @@
         <c:remove var="error" scope="session"/>
     </c:if>
 
-    <form action="LoginServlet" method="post">
+    <form action="LoginServlet" method="post" onsubmit="showLoader()">
         <input type="text" name="id_number" placeholder="UserID" required />
         <input type="password" name="password" placeholder="Password" required />
         <button type="submit">Login</button>
@@ -107,28 +160,31 @@
 </div>
 
 <script>
+    // Background slideshow
     const backgrounds = [
         'url("https://cdn.pixabay.com/photo/2020/12/29/10/38/bookshop-5870155_960_720.jpg")',
         'url("https://cdn.pixabay.com/photo/2017/08/01/17/31/books-2566812_1280.jpg")'
     ];
-
     let index = 0;
     const bg = document.getElementById('bg');
-
     function changeBackground() {
         index = (index + 1) % backgrounds.length;
         bg.style.backgroundImage = backgrounds[index];
     }
-
     bg.style.backgroundImage = backgrounds[0];
     setInterval(changeBackground, 10000);
 
-    // Auto-hide error message after 50 seconds
+    // Loader handling
+    function showLoader() {
+        document.getElementById("loader").style.display = "flex";
+    }
+
+    // Auto-hide error message
     const errorBox = document.getElementById("errorBox");
     if (errorBox) {
         setTimeout(() => {
             errorBox.style.display = "none";
-        }, 1000); // 10 seconds
+        }, 10000); // 10 seconds
     }
 </script>
 

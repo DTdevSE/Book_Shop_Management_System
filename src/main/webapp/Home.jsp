@@ -13,7 +13,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-   <title>BookVault – Explore. Read. Grow.</title>
+   <title>Pahana Edu Home.</title>
     <link rel="icon" type="image/png" href="https://static.vecteezy.com/system/resources/previews/024/043/963/original/book-icon-clipart-transparent-background-free-png.png" />
   
 

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, com.bookshop.model.Supplier, com.bookshop.dao.SupplierDAO" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
     SupplierDAO dao = new SupplierDAO();
     List<Supplier> list = dao.getAllSuppliers();
@@ -67,6 +68,23 @@
     </a>
 
 <h2><i class="fas fa-truck-moving text-primary"></i> Manage Suppliers 🏢</h2>
+ <!-- Session-based Success Message -->
+<c:if test="${not empty sessionScope.success}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ${sessionScope.success}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <c:remove var="success" scope="session"/>
+</c:if>
+
+<!-- Session-based Error Message -->
+<c:if test="${not empty sessionScope.error}">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        ${sessionScope.error}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <c:remove var="error" scope="session"/>
+</c:if>
 
 <!-- Add Supplier Form -->
 <form method="post" action="SupplierServlet" class="add-supplier-form row g-3 align-items-center">
@@ -131,7 +149,23 @@
     </tbody>
 </table>
 </form>
+<script>
+    // Auto-hide Success message after 5 seconds
+    const successBox = document.getElementById("successBox");
+    if (successBox) {
+        setTimeout(() => {
+            successBox.style.display = "none";
+        }, 5000); // 5000 ms = 5 seconds
+    }
 
+    // Auto-hide Error message after 5 seconds
+    const errorBox = document.getElementById("errorBox");
+    if (errorBox) {
+        setTimeout(() => {
+            errorBox.style.display = "none";
+        }, 5000); // 5000 ms = 5 seconds
+    }
+</script>
 <!-- Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

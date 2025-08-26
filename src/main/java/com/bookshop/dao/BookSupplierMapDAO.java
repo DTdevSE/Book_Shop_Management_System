@@ -164,4 +164,20 @@ public class BookSupplierMapDAO {
         }
         return list;
     }
+ // In your DAO class
+    public int getSupplyPriceErrorCount() {
+        String sql = "SELECT COUNT(*) FROM book_supplier_map m " +
+                     "JOIN books b ON m.book_id = b.id " +
+                     "WHERE m.supply_price > b.price";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

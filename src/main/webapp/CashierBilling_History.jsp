@@ -161,7 +161,7 @@
                         </div>
 
                         <div class="mt-3">
-                            <a href="BillSummary.jsp?billId=<%= bill.getBillId() %>" target="_blank" class="btn btn-outline-success btn-sm">
+                            <a href="BillSummeryCashier.jsp?billId=<%= bill.getBillId() %>" target="_blank" class="btn btn-outline-success btn-sm">
                                 <i class="bi bi-printer-fill"></i> View & Print
                             </a>
                         </div>

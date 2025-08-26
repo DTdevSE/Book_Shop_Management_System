@@ -54,7 +54,7 @@
     <%
         if (customerId == null) {
     %>
-        <div class="alert alert-warning">Please select a customer first in the book browsing page.</div>
+        <div class="alert alert-warning">Please select a customer first.</div>
     <%
         } else if (cartItems.isEmpty()) {
     %>
